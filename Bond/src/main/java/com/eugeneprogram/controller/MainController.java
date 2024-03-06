@@ -21,8 +21,11 @@ public class MainController {
         ModelAndView mv = new ModelAndView();
         mv.setViewName("financial/financial_position");
         
+        System.out.println("============================1============================");
         List<Map<String, Object>> tempList = new ArrayList<>();        
         tempList = bondService.getDebtList();
+        System.out.println("============================2============================");
+        System.out.println(tempList);
         mv.addObject("debtList", tempList);
         
         return mv;

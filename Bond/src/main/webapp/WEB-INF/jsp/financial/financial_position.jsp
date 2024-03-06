@@ -1,5 +1,7 @@
 <%@ page language="java" contentType="text/html; charset=EUC-KR"
     pageEncoding="EUC-KR"%>
+<%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
+
 <!DOCTYPE html>
 <html>
 <head>
@@ -34,15 +36,12 @@
     </tr>
     <tr style="height: 25px; border-color: black; background-color: yellow;">
         <td style="width: 40px;">
-            <!-- debt_id -->
             순번
         </td>   
         <td style="width: 100px;">
-            <!-- debt_date -->
             날짜
         </td>
         <td style="width: 110px;">
-            <!-- debt_rental -->
             대여금
         </td>
         <td style="width: 80px;">
@@ -92,71 +91,67 @@
             (부당이득권)
         </td>
     </tr>
-    <tr style="height: 25px; border-color: black;">
-        <td>
-            <!-- 순번 -->
-            1
-        </td>
-        <td>
-            <!-- 날짜 -->
-            2024-03-05
-        </td>
-        <td>
-            <!-- 대여금 -->
-            2,000,000,000
-        </td>
-        <td>
-            <!-- 적용이율 -->
-            12%
-        </td>
-        <td>
-            <!-- 30%원금(누적) -->
-        
-        </td>
-        <td>
-            <!-- 18%원금(누적) -->
-        
-        </td>
-        <td>
-            <!-- 12%원금(누적) -->
-        
-        </td>
-        <td>
-            <!-- 30%이자 합계액 -->
-        </td>
-        <td>
-            <!-- 18%이자 합계액 -->
-        </td>
-        <td>
-            <!-- 12%이자 합계액 -->
-        </td>
-        <td style="color: blue;">
-            <!-- 변제금액 -->
-            700,000
-        </td>
-        <td>
-            <!-- 30%이자(충당후) 합계액 -->
-        </td>
-        <td>
-            <!-- 18%이자(충당후) 합계액 -->
-        </td>
-        <td>
-            <!-- 12%이자(충당후) 합계액 -->
-        </td>
-        <td>
-            <!-- 30%원금(충당후) 합계액 -->
-        </td>
-        <td style="color: red;">
-            <!-- 18%원금(충당후) 합계액 -->
-        </td>
-        <td style="color: red;">
-            <!-- 12%원금(충당후) 합계액 -->
-        </td>
-        <td>
-            <!-- 피고채권 -->
-            77,595
-        </td>
-    </tr>
+    <c:forEach var="tempDebtList" items="${debtList}" varStatus="status">
+        <c:set var="i" value="${i+1 }" />
+        <tr style="height: 25px; border-color: black;">
+            <td>
+	            ${i} 
+	        </td>
+	        <td>
+	            ${tempDebtList.debt_date }
+	        </td>
+	        <td>
+	            ${tempDebtList.debt_rental }
+	        </td>
+	        <td>            
+                ${tempDebtList.debt_interest }
+	        </td>
+	        <td>
+                ${tempDebtList.debt_30rental }	        
+	        </td>
+	        <td>
+	           ${tempDebtList.debt_18rental }
+	        </td>
+	        <td>
+	           ${tempDebtList.debt_12rental }
+	        </td>
+	        <td>
+	            ${tempDebtList.debt_30interest }
+	        </td>
+	        <td>
+	            ${tempDebtList.debt_18interest }
+	        </td>
+	        <td>
+	            ${tempDebtList.debt_12interest }
+	        </td>
+	        <td style="color: blue;">
+	            ${tempDebtList.debt_liquidation }
+	        </td>
+	        <td>
+	            ${tempDebtList.debt_after30interest }
+	        </td>
+	        <td>
+	            ${tempDebtList.debt_after18interest }
+	        </td>
+	        <td>
+	            ${tempDebtList.debt_after12interest }
+	        </td>
+	        <td>
+	            ${tempDebtList.debt_after30rental }
+	        </td>
+	        <td style="color: red;">
+	            ${tempDebtList.debt_after18rental }
+	        </td>
+	        <td style="color: red;">
+	            ${tempDebtList.debt_after12rental }
+	        </td>
+	        <td>
+	            ${tempDebtList.debt_defendant}
+	        </td>
+        </tr>    
+    </c:forEach>
+    
+    
     <tr style="border-color: black; height: 25px;">
         <td>
             1
