@@ -1,7 +1,8 @@
 <%@ page language="java" contentType="text/html; charset=EUC-KR"
     pageEncoding="EUC-KR"%>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
-
+<%@ page import="com.eugeneprogram.service.LoginService" %>
+<!-- lawyer 로그인 id, lawyer가 채무자를 선택하면 해당 채무자의 id, 채무자의 id에 연결된 채권자의 id까지 3가지 id 가져올 것 -->
 <!DOCTYPE html>
 <html>
 <head>
@@ -9,8 +10,83 @@
 <title>충당표</title>
 </head>
 <body>
-<h3>[변제충당표]</h3>
-<input type="button" style="width: 100px; height: 30px;" value="변제 / 대여">
+
+
+<script type="text/javascript">
+function inputNullCheck()   {
+    var x = document.forms["pay"]["date"].value;
+    var y = document.forms["pay"]["value"].value;
+    
+    if(x === "") {
+    	alert("날짜를 입력하세요.");
+    	document.pay.date.focus();
+    	return false;
+    }
+    if(y === "") {
+    	alert("금액을 입력하세요.");
+    	document.pay.value.focus();
+    	return false;
+    }
+    return true;
+}
+function validateForm() {
+    var radios = document.getElementsByName("chk_info");
+    var formValid = false;
+
+    var i = 0;
+    while (!formValid && i < radios.length) {
+        if (radios[i].checked) {
+        	formValid = true;
+        }
+        i++;        
+    }
+
+    if (!formValid) {
+    	alert("변제 or 대여를 선택하세요.");
+    	return false;
+    }
+}
+
+function submitForm()   {
+	return inputNullCheck() && validateForm();
+}
+</script>
+<%
+String uID = request.getParameter("uID");
+String uPW = request.getParameter("uPW");
+System.out.println("========uID : " + uID + ", uPW : " + uPW + "========");
+%>
+<!-- white-space: nowrap; 문자 내용이 모니터화면만큼에서 줄을 내리지 않고 끝까지 출력하는 속성 -->
+<h1 style="color: red; white-space: nowrap;">[ 원고 채권 중 2008. 12. 경 2건 1억원을 제외하고 모두 연30% 이율로 볼 경우(즉, 연5% 채권이 없다고 볼 경우), 현금변제, 대물변제 더하면 피고 조금 승소 ]</h1>
+<h2>[변제충당표]</h2>
+<form name="pay" action="check_info" method="post" onsubmit="return submitForm()">
+<table border="1" style="broder-color: black; width: 830px; height: 50px;">
+    <tr>
+        <td>
+	        &nbsp;
+	        <input type="radio" name="chk_info" value="liquidation">변제
+	        <input type="radio" name="chk_info" value="rental">대여&nbsp;&nbsp;&nbsp;
+	        이율&nbsp;:&nbsp; 
+	        <select name="interest">
+	            <option value="12" selected="selected">12%</option>
+	            <option value="18">18%</option>
+                <option value="30">30%</option>
+	        </select>
+	        &nbsp;&nbsp;
+	        날짜&nbsp;:&nbsp;
+	        <input type="date" name="date" style="width: 100px; heigth:50px;">&nbsp;&nbsp;
+	        금액&nbsp;:&nbsp;
+	        <input type="text" id="value" name="value" oninput="this.value = this.value.replace(/[^0-9]/g, '').replace(/\d(?=(?:\d{3})+$)/g, '$&,')" style="width: 200px; heigth:50px;">원&nbsp;&nbsp;
+	        <input type="submit" style="width: 60px; height:30px;" value="납부">
+	    </td>
+    </tr>
+</table>
+</form>
+<br>
+<!--  
+<input type="button" onclick="location.href = 'liquidationButton?debtor_id=${debtor_id}'" style="width: 100px; height: 30px;" value="변제">
+<input type="button" onclick="location.href = 'rentalButton?debtor_id=${debtor_id}'" style="width: 100px; height: 30px;" value="대여">
+-->
 <table border="1" style="border-color:white; width: 2380px; text-align: center; border-collapse: collapse; ">
     <tr style="height: 30px;">
         <td colspan="4" style="border-color: black; border-top: none; border-left: none;">        
@@ -21,8 +97,7 @@
         <td colspan="3" style="border-color: black; background-color: yellow;">
             해당일까지 발생한 변제 충당 전의 이자
         </td>
-        <td style="border-color: black; border-top:none;">
-        
+        <td style="border-color: black; border-top:none;">        
         </td>
         <td colspan="3" style="border-color: black; background-color: yellow;">
             변제충당 후 이자
