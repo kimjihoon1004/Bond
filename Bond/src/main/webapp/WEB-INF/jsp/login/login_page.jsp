@@ -1,44 +1,48 @@
-<%@ page language="java" contentType="text/html; charset=EUC-KR"
-    pageEncoding="EUC-KR"%>
+<%@ page language="java" contentType="text/html; charset=UTF-8"
+    pageEncoding="UTF-8"%>
 <!DOCTYPE html>
 <html>
 <head>
 <meta charset="EUC-KR">
-<title>∑Œ±◊¿Œ</title>
+<title>Î°úÍ∑∏Ïù∏</title>
 </head>
 <body>
 
 <fieldset>
-    <center>
         <form name="login" action="login" method="post">
             <br>
-            <table border="2" style="width: 800px; height: 130px;" cellspacing = "0" cellpadding = "2">
-                
-                <tr style="height: 50px;">
-                    <td colspan = "2" bgcolor = "lightgray" class = "style1"><h2><center>Bond ∑Œ±◊¿Œ</center></h2></td>                   
+            <table border="2" style="width: 800px; height: 130px; margin-left: auto; margin-right: auto;">                
+                <tr style="height: 50px; text-align: center;">
+                    <td colspan = "2" bgcolor = "lightgray" class = "style1">
+                    <h2>Bond Î°úÍ∑∏Ïù∏</h2>
+                    </td>                   
                 </tr>
                 
                 <tr style="height: 40px;">
-                    <td width = "130" bgcolor = "lightgray" class = "style2"><center>æ∆¿Ãµ</center></td>
+                    <td style="text-align: center;" width = "130" bgcolor = "lightgray" class = "style2">
+                        ÏïÑÏù¥Îîî
+                    </td>
                     <td  width = "500">
-                        &nbsp;<input type="text" name="uID" style="width: 300px; height: 20px; font-size: large;" />
+                        &nbsp;&nbsp;<input type="text" name="uID" style="width: 300px; height: 20px; font-size: large;" />
                     </td>
                 </tr>
                 <tr style="height: 40px;">
-                    <td width = "130" bgcolor = "lightgray" class = "style2"><center>∫Òπ–π¯»£</center></td>
+                    <td style="text-align: center;" width = "130" bgcolor = "lightgray" class = "style2">
+                        ÎπÑÎ∞ÄÎ≤àÌò∏
+                    </td>
                     <td  width = "500">
-                        &nbsp;<input type="password" name="uPW" style="width: 300px; height: 20px; font-size: large;" />
+                        &nbsp;&nbsp;<input type="password" name="uPW" style="width: 300px; height: 20px; font-size: large;" />
                     </td>
                 </tr>
             </table>
             <br>
-            <center>
-                <input type = "submit" style="WIDTH: 90pt; HEIGHT: 20pt; font-size: medium;" value="∑Œ±◊¿Œ">&nbsp;&nbsp;
-                <input type = "button" style="WIDTH: 150pt; HEIGHT: 20pt; font-size: medium; " onclick = "location.href='find_user'" value="æ∆¿Ãµ/∫Òπ–π¯»£ √£±‚"/>&nbsp;&nbsp;
-            </center>
+            <div style="text-align: center;">
+	            <input type = "submit" style="WIDTH: 90pt; HEIGHT: 20pt; font-size: medium;" value="Î°úÍ∑∏Ïù∏">&nbsp;&nbsp;
+	            <input type = "button" style="WIDTH: 110pt; HEIGHT: 20pt; font-size: medium; " onclick = "location.href='find_id'" value="ÏïÑÏù¥Îîî Ï∞æÍ∏∞"/>&nbsp;&nbsp;
+	            <input type = "button" style="WIDTH: 110pt; HEIGHT: 20pt; font-size: medium; " onclick = "location.href='find_pw'" value="ÎπÑÎ∞ÄÎ≤àÌò∏ Ï∞æÍ∏∞"/>&nbsp;&nbsp;       
+            </div>
             <br>
         </form>
-    </center>
 </fieldset>
 </body>
 </html>

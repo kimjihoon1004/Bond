@@ -1,6 +1,8 @@
 package com.eugeneprogram.controller;
 
+import java.security.PublicKey;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -17,8 +19,9 @@ import com.eugeneprogram.service.LoginService;
 @Controller
 public class MainController {
     @Autowired
-    BondService bondService;
-    LoginService loginService;
+    private BondService bondService;
+    @Autowired
+    private LoginService loginService;
     
     @GetMapping(value = "financial")
     public ModelAndView getFinancial() throws Exception   {
@@ -68,8 +71,70 @@ public class MainController {
         return "login/login_page";
     }
     
+    
     @PostMapping(value = "login")
-    public String getLogin(@RequestParam("uID") String uID, @RequestParam("uPW") String uPW)    {
-        return "financial/financial_position";
+    public String getLogin(@RequestParam("uID") String uID, @RequestParam("uPW") String uPW) throws Exception    {
+        Map<String, Object> lawyerMap = new HashMap<String, Object>()   {{
+            put("lawyer_id", uID);
+            put("lawyer_pw", uPW);
+        }};
+        
+        List<Map<String, Object>> temp = loginService.selectPw(lawyerMap);
+        
+        if(temp.size() != 0)    {   
+            System.out.println("로그인 결과 : " + temp.get(0).get("lawyer_id"));            
+            return "financial/financial_position";            
+        }
+        else {
+            return "login/login_fail";
+        }
+    }
+    
+    
+    @GetMapping(value="find_pw")
+    public String find_pw() {
+        return "login/find_pw";
+    }
+    
+    @GetMapping(value="find_id")
+    public String find_id() {
+        return "login/find_id";
+    }
+    
+    @PostMapping(value="checkId")
+    public ModelAndView getCheckId(@RequestParam("uName") String name, @RequestParam("hp1") String hp1, @RequestParam("hp2") String hp2, @RequestParam("hp3") String hp3) throws Exception    {
+        ModelAndView mv = new ModelAndView();
+        mv.setViewName("login/checkId");
+        
+        System.out.println(name);
+        System.out.println(hp1 + "-" + hp2 + "-" + hp3);
+        String hp = hp1 + "-" + hp2 + "-" + hp3;
+        
+        Map<String, Object> piMap = new HashMap<String, Object>();
+        piMap.put("lawyer_name", name);
+        piMap.put("lawyer_hp", hp);
+        
+        
+        String idString = loginService.checkId(piMap);
+        mv.addObject("id", idString);
+        System.out.println(idString);
+        
+        return mv;
+    }
+    
+    @PostMapping(value = "checkPw")
+    public ModelAndView getCheckPw(@RequestParam("uID") String id, @RequestParam("uNAME") String name, @RequestParam("hp1") String hp1, @RequestParam("hp2") String hp2, @RequestParam("hp3") String hp3)   {
+        ModelAndView mv = new ModelAndView();
+        mv.setViewName("login/checkPw");
+        
+        String hp = hp1 + "-" + hp2 + "-" + hp3;
+        
+        Map<String, Object> piMap = new HashMap<String, Object>();
+        piMap.put("lawyer_name", name);
+        piMap.put("lawyer_hp", hp);
+        piMap.put("lawyer_id", id);
+        
+        
+        return mv;
     }
 }
