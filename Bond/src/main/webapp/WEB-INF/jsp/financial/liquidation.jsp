@@ -29,13 +29,13 @@
 String debtor_id = request.getParameter("debtor_id");
 
 %>
-<table border="3" style="text-align:center; border-color:black; width: 500px; height: 500px;">
+<table border="3" style="text-align:center; border-color:black; width: 500px;">
     <tr style="height: 80px; font-size: xx-large;">    
         <td colspan="2">
             [ 변제 ]
         </td>
     </tr>
-    <tr style="height: 50px; font-size: large;">
+    <tr style="height: 60px; font-size: large;">
         <td style="width: 150px;">
             날짜
         </td>
@@ -43,20 +43,12 @@ String debtor_id = request.getParameter("debtor_id");
             <input type="date" name="liqudiation_date" style="width: 300px; height: 35px; font-size: large;">
         </td>
     </tr>
-    <tr style="height: 50px; font-size: large;">
+    <tr style="height: 60px; font-size: large;">
         <td style="width: 150px;">
             변제금액
         </td>
         <td style="width: 350px;">
             <input type="text" oninput="this.value = this.value.replace(/[^0-9]/g, '').replace(/\d(?=(?:\d{3})+$)/g, '$&,')" placeholder="금액 입력" name="liqudiation_value" style="width: 300px; height: 35px; font-size: large;">
-        </td>
-    </tr>
-    <tr>
-        <td>
-        1
-        </td>
-        <td>
-        2
         </td>
     </tr>
 </table>

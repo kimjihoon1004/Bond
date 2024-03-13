@@ -1,9 +1,14 @@
+<%@page import="com.eugeneprogram.dao.BondMapper"%>
 <%@page import="java.util.HashMap"%>
 <%@page import="java.util.Map"%>
+<%@page import="java.util.List"%>
+<%@page import="java.util.ArrayList"%>
 <%@ page language="java" contentType="text/html; charset=EUC-KR"
     pageEncoding="EUC-KR"%>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
-<%@ page import="com.eugeneprogram.service.LoginService" %>
+<%@ page import="com.eugeneprogram.service.*"%>
+<%@ include file="../login/login_error.jsp" %>
+
 <!-- lawyer 로그인 id, lawyer가 채무자를 선택하면 해당 채무자의 id, 채무자의 id에 연결된 채권자의 id까지 3가지 id 가져올 것 -->
 <!DOCTYPE html>
 <html>
@@ -11,9 +16,8 @@
 <meta charset="EUC-KR">
 <title>충당표</title>
 </head>
+
 <body>
-
-
 <script type="text/javascript">
 function inputNullCheck()   {
     var x = document.forms["pay"]["date"].value;
@@ -54,14 +58,19 @@ function submitForm()   {
 }
 </script>
 <%
-String uID = request.getParameter("uID");
-String uPW = request.getParameter("uPW");
-System.out.println("========uID : " + uID + ", uPW : " + uPW + "========");
+String uID = (String) session.getAttribute("uID");
+String uPW = (String) session.getAttribute("uPW");
+int lawyerId = (Integer) session.getAttribute("lawyerId");
+System.out.println(uID + " " + uPW + " " + lawyerId);
+String debtorName = request.getParameter("debtor_name");
+System.out.println("===============================" + debtorName + "===============================");
 %>
 <!-- white-space: nowrap; 문자 내용이 모니터화면만큼에서 줄을 내리지 않고 끝까지 출력하는 속성 -->
 <h1 style="color: red; white-space: nowrap;">[ 원고 채권 중 2008. 12. 경 2건 1억원을 제외하고 모두 연30% 이율로 볼 경우(즉, 연5% 채권이 없다고 볼 경우), 현금변제, 대물변제 더하면 피고 조금 승소 ]</h1>
-<h2>[변제충당표]</h2>
+<h2>[ ${debtor_name}님의 변제충당표 ]</h2>
 <form name="pay" action="check_info" method="post" onsubmit="return submitForm()">
+<input type="hidden" name="creditorId" value="${creditor_id }">
+<input type="hidden" name="debtorId" value="${debtor_id }">
 <table border="1" style="broder-color: black; width: 830px; height: 50px;">
     <tr>
         <td>

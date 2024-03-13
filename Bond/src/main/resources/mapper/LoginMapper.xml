@@ -2,7 +2,7 @@
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 
 <mapper namespace="com.eugeneprogram.dao.LoginMapper">
-    <select id="selectPw" resultType="java.util.Map" parameterType="java.util.Map">
+    <select id="selectLawyer" resultType="java.util.Map" parameterType="java.util.Map">
         SELECT * FROM lawyer WHERE lawyer_id = #{lawyer_id} AND lawyer_pw = password(#{lawyer_pw});
     </select>
     
@@ -12,5 +12,9 @@
     
     <select id="checkPw" resultType="Integer" parameterType="java.util.Map">
         SELECT * FROM lawyer WHERE lawyer_id = #{lawyer_id} AND lawyer_hp = #{lawyer_hp} AND lawyer_name = #{lawyer_name};
+    </select>
+    
+    <select id="selectDebtor" resultType="java.util.Map" parameterType="Integer">
+        SELECT * FROM debtor WHERE lawyerId = #{lawyer_id};
     </select>
 </mapper>

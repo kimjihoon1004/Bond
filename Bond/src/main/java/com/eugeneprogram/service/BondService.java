@@ -13,7 +13,7 @@ public class BondService {
     @Autowired
     BondMapper bondMapper;
     
-    public List<Map<String, Object>> getDebtList() throws Exception {
-        return bondMapper.getDebtList();
+    public List<Map<String, Object>> getDebtList(String debtor_id) throws Exception {
+        return bondMapper.getDebtList(debtor_id);
     }
 }

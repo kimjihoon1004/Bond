@@ -2,7 +2,7 @@
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 
 <mapper namespace="com.eugeneprogram.dao.BondMapper">
-    <select id="getDebtList" resultType="java.util.Map">
-        SELECT * FROM debt;
+    <select id="getDebtList" resultType="java.util.Map" parameterType="String">
+        SELECT * FROM debt WHERE debtor_id = #{debtor_id};
     </select>
 </mapper>

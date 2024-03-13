@@ -1,6 +1,5 @@
 package com.eugeneprogram.controller;
 
-import java.security.PublicKey;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -9,12 +8,16 @@ import java.util.Map;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.servlet.ModelAndView;
 
 import com.eugeneprogram.service.BondService;
 import com.eugeneprogram.service.LoginService;
+
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpSession;
 
 @Controller
 public class MainController {
@@ -23,41 +26,58 @@ public class MainController {
     @Autowired
     private LoginService loginService;
     
-    @GetMapping(value = "financial")
-    public ModelAndView getFinancial() throws Exception   {
+    @PostMapping(value = "financial")
+    public ModelAndView getFinancial(@RequestParam("lawyer_id") String lawyer_id, @RequestParam("debtor_id") String debtor_id, @RequestParam("creditor_id") String creditor_id, @RequestParam("debtor_name") String debtor_name) throws Exception   {
         ModelAndView mv = new ModelAndView();
+        
+        System.out.println("lawyer_id : " + lawyer_id);
+        System.out.println("debtor_id : " + debtor_id);
+        System.out.println("creditor_id : " + creditor_id);
+        System.out.println("debtor_name : " + debtor_name);
         mv.setViewName("financial/financial_position");
         
         List<Map<String, Object>> tempList = new ArrayList<>();        
-        tempList = bondService.getDebtList();
-        String debtor_id = tempList.get(0).get("debtor_id").toString();
+        tempList = bondService.getDebtList(debtor_id);
+        mv.addObject("debtList", tempList);
+        mv.addObject("debtor_name", debtor_name);
+        mv.addObject("creditor_id", creditor_id);
+        mv.addObject("debtor_id", debtor_id);
+        /*
+         * String debtor_id = tempList.get(0).get("debtor_id").toString();
         String debt_id = tempList.get(0).get("debt_id").toString();
         String lawyer_id = tempList.get(0).get("lawyer_id").toString();
         String creditor_id = tempList.get(0).get("creditor_id").toString();
                 
-        mv.addObject("debtList", tempList);
+        
         mv.addObject("debtor_id", debtor_id);
         mv.addObject("creditor_id", creditor_id);
         mv.addObject("lawyer_id", lawyer_id);
-        mv.addObject("debt_id", debt_id);
+        mv.addObject("debt_id", debt_id);*/
         
         
         return mv;
     }
     
-    @GetMapping(value = "liquidationButton")
+    @PostMapping(value = "liquidation")
     public String getLiquidation()  {
         return "financial/liquidation";
     }
     
-    @GetMapping(value = "rentalButton")
+    @GetMapping(value = "rental")
     public String getRental()   {
+        
+        
         return "financial/rental";
+    }
+    
+    @GetMapping(value="nullSession")
+    public String getNullSession()  {
+        return "nullSession";
     }
     
     /*url경로를 post방식으로 받았으므로 @PostMapping처리를 하며 이용하는 페이지에서 만든 파라미터들을 메서드의 입력값으로 받고 jsp페이지를 반환한다.*/
     @PostMapping(value = "check_info")
-    public String getInfo(@RequestParam("chk_info") String chk_info, @RequestParam("interest") String interest, @RequestParam("date") String date, @RequestParam("value") String value) {
+    public String getInfo(@RequestParam("chk_info") String chk_info,@RequestParam("interest") String interest, @RequestParam("date") String date, @RequestParam("value") String value,@RequestParam("debtorId") String debtor_id, @RequestParam("creditorId") String creditor_id) {
         return "financial/check_info";
     }
     
@@ -68,26 +88,76 @@ public class MainController {
     
     @GetMapping(value = "login_page")
     public String getLoginPage()    {
+        System.out.println("login_page");
         return "login/login_page";
+    }
+    
+    @GetMapping(value="login_error")
+    public String getLoginError()   {
+        return "login/login_error";
+    }
+    
+    @GetMapping(value="selectDebtor")
+    public ModelAndView getSelectDebtor(HttpServletRequest httpServletRequest) throws Exception   {
+        ModelAndView mv = new ModelAndView();
+        HttpSession session = httpServletRequest.getSession(false);
+        
+        String id = (String) session.getAttribute("uID");
+        String pw = (String) session.getAttribute("uPW");
+        
+        Map<String, Object> lawyerMap = new HashMap<String, Object>()   {{
+            put("lawyer_id", id);
+            put("lawyer_pw", pw);
+        }};
+        
+        List<Map<String, Object>> lawyerList = loginService.selectLawyer(lawyerMap);
+        
+        int lawyer_id = (int) lawyerList.get(0).get("id");
+        String lawyer_name = (String) lawyerList.get(0).get("lawyer_name");
+        
+        mv.setViewName("financial/selectDebtor");
+        mv.addObject("lawyer_id", lawyer_id);
+        mv.addObject("lawyer_name", lawyer_name);
+        
+        List<Map<String, Object>> debtorList = loginService.selectDebtor(lawyer_id);
+        
+        mv.addObject("debtorList", debtorList);
+        return mv;
     }
     
     
     @PostMapping(value = "login")
-    public String getLogin(@RequestParam("uID") String uID, @RequestParam("uPW") String uPW) throws Exception    {
+    public ModelAndView getLogin(HttpServletRequest httpServletRequest, @RequestParam("uID") String uID, @RequestParam("uPW") String uPW) throws Exception    {
+        /*로그인 시 아이디와 패스워드를 세션에 둔다*/
+        HttpSession session = httpServletRequest.getSession(false);
+        session.setAttribute("uID", uID);
+        session.setAttribute("uPW", uPW);
+        session.setMaxInactiveInterval(1800);
+        
+        ModelAndView mv = new ModelAndView();
+        System.out.println("pass login");
         Map<String, Object> lawyerMap = new HashMap<String, Object>()   {{
             put("lawyer_id", uID);
             put("lawyer_pw", uPW);
         }};
         
-        List<Map<String, Object>> temp = loginService.selectPw(lawyerMap);
-        
+        List<Map<String, Object>> temp = loginService.selectLawyer(lawyerMap);
         if(temp.size() != 0)    {   
-            System.out.println("로그인 결과 : " + temp.get(0).get("lawyer_id"));            
-            return "financial/financial_position";            
+            System.out.println("로그인 결과 : " + temp.get(0).get("lawyer_id"));
+            session.setAttribute("lawyerId", temp.get(0).get("id"));
+        
+            mv.setViewName("redirect:/selectDebtor");         
         }
         else {
-            return "login/login_fail";
+            mv.setViewName("login/login_fail");            
         }
+        return mv;
+    }
+    @GetMapping(value="logout")
+    public String getLogout(HttpServletRequest httpServletRequest)   {
+        HttpSession session = httpServletRequest.getSession(false);
+        session.invalidate();
+        return "login/login_page";
     }
     
     
