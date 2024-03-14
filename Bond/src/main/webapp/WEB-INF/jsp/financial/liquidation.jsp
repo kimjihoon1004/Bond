@@ -23,34 +23,37 @@
     <input type="text" oninput="this.value = this.value.replace(/[^0-9]/g, '').replace(/\d(?=(?:\d{3})+$)/g, '$&,')" />
     
  -->
-
-
 <%
 String debtor_id = request.getParameter("debtor_id");
-
+String lawyer_id = request.getParameter("lawyer_id");
+String creditor_id = request.getParameter("creditor_id");
+String date = request.getParameter("date");
+String value = request.getParameter("value");
 %>
-<table border="3" style="text-align:center; border-color:black; width: 500px;">
-    <tr style="height: 80px; font-size: xx-large;">    
-        <td colspan="2">
-            [ 변제 ]
-        </td>
-    </tr>
-    <tr style="height: 60px; font-size: large;">
-        <td style="width: 150px;">
-            날짜
-        </td>
-        <td style="width: 350px;">
-            <input type="date" name="liqudiation_date" style="width: 300px; height: 35px; font-size: large;">
-        </td>
-    </tr>
-    <tr style="height: 60px; font-size: large;">
-        <td style="width: 150px;">
-            변제금액
-        </td>
-        <td style="width: 350px;">
-            <input type="text" oninput="this.value = this.value.replace(/[^0-9]/g, '').replace(/\d(?=(?:\d{3})+$)/g, '$&,')" placeholder="금액 입력" name="liqudiation_value" style="width: 300px; height: 35px; font-size: large;">
-        </td>
-    </tr>
-</table>
+<!-- financial에서 필요한 입력변수들을 form형태로 만들고, 밑에서 form id를 활용하여 submit한다. -->
+<form id="financialForm" action="financial" method="post">
+    <input type="hidden" name="lawyer_id" value="<%=lawyer_id%>">
+    <input type="hidden" name="debtor_id" value="<%=debtor_id %>">
+    <input type="hidden" name="creditor_id" value="<%=creditor_id %>">
+    <input type="hidden" name="debtor_name" value="${debtorName }">
+</form>
+ <script type="text/javascript">
+ if(${debtList_size} == 0)  {
+	 alert("변제할 값이 존재하지 않습니다.");
+	 location.href="javascript:history.back();";
+ }
+ else   {
+	 if(${success} == 0)   {
+		 alert("변제 오류 발생");
+		 location.href="javascript:history.back();";
+	 }
+	 else  {
+		 alert("변제하였습니다.");
+		 document.getElementById("financialForm").submit();
+	 }
+ }
+ </script>
+
+
 </body>
 </html>

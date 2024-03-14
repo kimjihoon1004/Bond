@@ -63,7 +63,10 @@ if(info.equals("rental"))    {
 /* '변제'를 선택했다면, 대여금은 0으로 처리*/
 else if(info.equals("liquidation"))  {%>
 	<br><br>
-	<form action="rental" method="post">
+	<form action="liquidation" method="post">
+	<input type="hidden" name="debtor_id" value="<%=debtorId %>">
+	<input type="hidden" name="creditor_id" value="<%=creditorId %>">
+    <input type="hidden" name="lawyer_id" value="<%=lawyerId %>">
     <table border="3" style="text-align:center; border-color:black; width: 500px; margin-left: auto; margin-right: auto;">
 	    <tr style="height: 80px; font-size: xx-large;">    
 	        <td colspan="2">
@@ -84,16 +87,17 @@ else if(info.equals("liquidation"))  {%>
 	            변제금액
 	        </td>
 	        <td style="width: 350px;">
-	            <input type="hidden" name="liquidation_value" value="<%=value %>"> 
+	            <input type="hidden" name="value" value="<%=value %>"> 
 	            <%=value %>원
 	        </td>
 	    </tr>
 	</table><br>
-	</form>
+	
 	<div style="text-align: center;">
-		<input type="button" style="width: 150px; height: 40px; font-size: large;" value="변제">&nbsp;&nbsp;
+		<input type="submit" style="width: 150px; height: 40px; font-size: large;" value="변제">&nbsp;&nbsp;
 		<input type="button" style="width: 150px; height: 40px; font-size: large;" value="취소" onclick="history.back()">
     </div>
+    </form>
 <%} %>
 
 

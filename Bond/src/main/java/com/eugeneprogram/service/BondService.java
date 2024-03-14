@@ -16,4 +16,14 @@ public class BondService {
     public List<Map<String, Object>> getDebtList(String debtor_id) throws Exception {
         return bondMapper.getDebtList(debtor_id);
     }
+    
+    public int insertDebtLiquidation(Map<String, Object> debtMap) throws Exception {
+        int success = 0;
+        success = bondMapper.insertDebtLiquidation(debtMap);
+        return success;
+    }
+    
+    public String selectDebtorName(String debtor_id) throws Exception   {
+        return bondMapper.selectDebtorName(debtor_id);
+    }
 }

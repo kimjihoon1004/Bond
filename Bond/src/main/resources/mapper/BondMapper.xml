@@ -5,4 +5,19 @@
     <select id="getDebtList" resultType="java.util.Map" parameterType="String">
         SELECT * FROM debt WHERE debtor_id = #{debtor_id};
     </select>
+    
+    <insert id="insertDebtLiquidation" parameterType="java.util.Map">
+        INSERT INTO debt(creditor_id, debtor_id, lawyer_id, debt_date, debt_30rental, debt_18rental, debt_12rental,
+         debt_30interest, debt_18interest, debt_12interest, debt_liquidation,
+          debt_after30interest, debt_after18interest, debt_after12interest, 
+          debt_after30rental, debt_after18rental, debt_after12rental)
+        VALUES(#{creditor_id}, #{debtor_id}, #{lawyer_id}, #{debt_date}, #{debt_30rental}, #{debt_18rental},
+         #{debt_12rental}, #{debt_30interest}, #{debt_18interest}, #{debt_12interest}, 
+         #{debt_liquidation}, #{debt_after30interest}, #{debt_after18interest}, #{debt_after12interest}, 
+         #{debt_after30rental}, #{debt_after18rental}, #{debt_after12rental});
+    </insert>
+    
+    <select id="selectDebtorName" parameterType="String" resultType="String">
+        SELECT debtor_name FROM debtor WHERE debtor_id = #{debtor_id};
+    </select>
 </mapper>
