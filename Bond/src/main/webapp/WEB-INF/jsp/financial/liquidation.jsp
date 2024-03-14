@@ -35,7 +35,7 @@ String value = request.getParameter("value");
     <input type="hidden" name="lawyer_id" value="<%=lawyer_id%>">
     <input type="hidden" name="debtor_id" value="<%=debtor_id %>">
     <input type="hidden" name="creditor_id" value="<%=creditor_id %>">
-    <input type="hidden" name="debtor_name" value="${debtorName }">
+    <input type="hidden" name="debtor_name" value="${debtor_name }">
 </form>
  <script type="text/javascript">
  if(${debtList_size} == 0)  {
@@ -48,7 +48,7 @@ String value = request.getParameter("value");
 		 location.href="javascript:history.back();";
 	 }
 	 else  {
-		 alert("변제하였습니다.");
+		 alert("변제되였습니다.");
 		 document.getElementById("financialForm").submit();
 	 }
  }
