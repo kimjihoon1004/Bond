@@ -66,7 +66,6 @@ String debtorName = request.getParameter("debtor_name");
 System.out.println("===============================" + debtorName + "===============================");
 %>
 <!-- white-space: nowrap; 문자 내용이 모니터화면만큼에서 줄을 내리지 않고 끝까지 출력하는 속성 -->
-<h1 style="color: red; white-space: nowrap;">[ 원고 채권 중 2008. 12. 경 2건 1억원을 제외하고 모두 연30% 이율로 볼 경우(즉, 연5% 채권이 없다고 볼 경우), 현금변제, 대물변제 더하면 피고 조금 승소 ]</h1>
 <h2>[ ${debtor_name }님의 변제충당표 ]</h2>
 <form name="pay" action="check_info" method="post" onsubmit="return submitForm()">
 <input type="hidden" name="creditorId" value="${creditor_id }">

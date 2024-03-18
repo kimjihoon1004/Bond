@@ -399,6 +399,11 @@ public class MainController {
         return mv;
     }
     
+    @GetMapping(value="insertDebtor")
+    public String getInsertDebtor() {
+        return "financial/insertDebtor";
+    }
+    
     @GetMapping(value="nullSession")
     public String getNullSession()  {
         return "nullSession";
@@ -424,6 +429,51 @@ public class MainController {
     @GetMapping(value="login_error")
     public String getLoginError()   {
         return "login/login_error";
+    }
+    
+    @PostMapping(value="updateDebtorActivate")
+    public String updateDebtorActivate(Map<String, Object> model, @RequestParam("creditorList") String creditor_id ,@RequestParam("debtor_email") String debtor_email ,@RequestParam("debtor_name") String debtor_name, @RequestParam("hp1") String hp1, @RequestParam("hp2") String hp2, @RequestParam("hp3") String hp3, @RequestParam("debtor_id") String debtor_id) throws Exception    {
+        String debtor_hp = hp1 + "-" + hp2 + "-" + hp3;
+        System.out.println(debtor_hp + "\n" + debtor_id + "\n" + debtor_name + "\n" + debtor_email + "\n" + creditor_id);
+        
+        Map<String, Object> debtorMap = new HashMap<String, Object>();
+        debtorMap.put("creditor_id", creditor_id);
+        debtorMap.put("debtor_id", debtor_email);
+        debtorMap.put("id", debtor_id);
+        debtorMap.put("debtor_hp", debtor_hp);
+        debtorMap.put("debtor_name", debtor_name);
+        
+        int success = bondService.updateDebtor(debtorMap);
+        
+        model.put("success", success);
+        
+        return "financial/updateDebtorActivate";
+    }
+    
+    @GetMapping(value="updateDebtor")
+    public String getUpdateDebtor(@RequestParam("id") String id, Map<String, Object> model) throws Exception {
+        //System.out.println("아이디 : "  + id);
+        Map<String, Object> debtorMap = new HashMap<String, Object>();
+        debtorMap = bondService.selectDebtor(id);
+        
+        String hp_string = (String) debtorMap.get("debtor_hp");
+        String hp[] = hp_string.split("-");
+        String hp1 = hp[0];
+        String hp2 = hp[1];
+        String hp3 = hp[2];
+        
+        model.put("creditor_id", debtorMap.get("creditorId"));
+        model.put("debtor_id", debtorMap.get("debtor_id"));        
+        model.put("hp1", hp1);
+        model.put("hp2", hp2);
+        model.put("hp3", hp3);
+        model.put("debtor_name", debtorMap.get("debtor_name"));
+        
+        List<Map<String, Object>> creditorMap = bondService.selectCreditor();
+        
+        model.put("creditorList", creditorMap);
+        
+        return "financial/updateDebtor";
     }
     
     @GetMapping(value="selectDebtor")

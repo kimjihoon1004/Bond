@@ -6,6 +6,10 @@
         SELECT * FROM debt WHERE debtor_id = #{debtor_id};
     </select>
     
+    <select id="selectDebtor" resultType="java.util.Map" parameterType="String">
+        SELECT * FROM debtor WHERE id = #{debtor_id};
+    </select>
+    
     <insert id="insertDebt" parameterType="java.util.Map">
         INSERT INTO debt(creditor_id, debtor_id, debt_interest, debt_rental, lawyer_id, debt_date, debt_30rental, debt_18rental, debt_12rental,
          debt_30interest, debt_18interest, debt_12interest, debt_liquidation,
@@ -20,4 +24,12 @@
     <select id="selectDebtorName" parameterType="String" resultType="String">
         SELECT debtor_name FROM debtor WHERE id = #{debtor_id};
     </select>
+    
+    <select id="selectCreditor" resultType="java.util.Map">
+        SELECT * FROM creditor;
+    </select>
+    
+    <update id="updateDebtor" parameterType="java.util.Map">
+        UPDATE debtor SET debtor_id = #{debtor_id}, debtor_name = #{debtor_name}, debtor_hp = #{debtor_hp}, creditorId = #{creditor_id} WHERE id = #{id};
+    </update>
 </mapper>

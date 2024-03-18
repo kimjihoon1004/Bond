@@ -10,12 +10,13 @@
 <meta charset="EUC-KR">
 <title>Insert title here</title>
 <script>
-function go(debtorId, creditorId, debtorName) {
+function goFinancial(debtorId, creditorId, debtorName) {
 	document.frm.debtor_id.value = debtorId;
 	document.frm.creditor_id.value = creditorId;
 	document.frm.debtor_name.value = debtorName;
 	document.frm.submit();
 }
+
 </script>
 </head>
 <body>
@@ -23,7 +24,7 @@ function go(debtorId, creditorId, debtorName) {
 <input type="hidden" name="lawyer_id" value="${lawyer_id }">
 <table border="2" style="margin-left: auto; margin-right: auto;">
     <tr style="height: 50px; text-align: center;">
-        <td colspan = "3" bgcolor = "lightgray" class = "style1">
+        <td colspan = "4" bgcolor = "lightgray" class = "style1">
             <h2>${lawyer_name}님의 Bond</h2>
         </td>                   
     </tr>
@@ -37,6 +38,9 @@ function go(debtorId, creditorId, debtorName) {
         <td style="text-align: center; width: 100px;">
             선택
         </td>
+        <td style="text-align: center; width: 100px;">
+            수정
+        </td>
     </tr>
     <c:forEach var="debtorList" items="${debtorList }" varStatus="status">
 	<tr style="height: 40px;">
@@ -47,7 +51,10 @@ function go(debtorId, creditorId, debtorName) {
             ${debtorList.debtor_hp } 
         </td>
         <td style="text-align: center; width: 100px;">
-            <input type="button" onclick="go('${debtorList.id}','${debtorList.creditorId }','${debtorList.debtor_name}')" value="선택" style="width:60px; height:30px;">
+            <input type="button" onclick="goFinancial('${debtorList.id}','${debtorList.creditorId }','${debtorList.debtor_name}')" value="선택" style="font-size:medium; width:60px; height:30px;">
+        </td>
+        <td style="text-align: center; width: 100px;">
+            <input type="button" onclick="location.href='updateDebtor?id=${debtorList.id}'" value="수정" style="font-size:medium; width:60px; height:30px;">
         </td>
     </tr>
     </c:forEach>
@@ -55,8 +62,12 @@ function go(debtorId, creditorId, debtorName) {
 <input type="hidden" name="debtor_id" value=""> 
 <input type="hidden" name="creditor_id" value="">
 <input type="hidden" name="debtor_name" value="">
-
 </form>
-
+<br>
+<div style="text-align: center;">
+    <input type="button" value="채무자 추가" onclick = "location.href='insertDebtor'" style="font-size:medium; width:100px; height:30px;"/>&nbsp;&nbsp;
+    <input type="button" value="채권자 추가" onclick="location.href='insertCreditor'" style="font-size:medium; width:100px; height:30px;"/>&nbsp;&nbsp;
+    <input type="button" value="로그아웃" onclick="location.href='logout'" style="font-size:medium; width:100px; height:30px;"/>   
+</div>
 </body>
 </html>
