@@ -82,9 +82,13 @@
 	</c:when>
 	<c:when test="${debtMap.debt_condition eq 'liquidation'}">
         <form action="updateFinancialActivate" method="post">
+        <input type="hidden" name="lawyer_id" value="${lawyer_id} ">
+        <input type="hidden" name="creditor_id" value="${creditor_id }">
+        <input type="hidden" name="debt_interest" value="${debt_interest }">
         <input type="hidden" name="debt_condition" value="${debtMap.debt_condition }">
         <input type="hidden" name="debt_id" value="${debtMap.debt_id }">
         <input type="hidden" name="debtor_id" value="${debtMap.debtor_id }">
+        <input type="hidden" name="debtor_name" value="${debtor_name }">
         <table border="2" style="width= 400px; margin-left: auto; margin-right: auto;">
             <tr style="height: 50px; text-align: center;">
                 <td colspan="2" bgcolor="lightgray">

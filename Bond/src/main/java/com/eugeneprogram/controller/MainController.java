@@ -29,6 +29,7 @@ public class MainController {
     
     @PostMapping(value = "updateFinancial")
     public String getUpdateFinancial(Map<String, Object> model, @RequestParam("debtor_id") String debtor_id, @RequestParam("debt_id") String debt_id, @RequestParam("debt_interest") String debt_interest, @RequestParam("lawyer_id") String lawyer_id, @RequestParam("creditor_id") String creditor_id) throws Exception  {        
+        System.out.println("updateFinancial");
         model.put("debtor_id", debtor_id);
         model.put("debt_id", debt_id);      
         
@@ -40,6 +41,9 @@ public class MainController {
         model.put("debtMap", debtMap);
         String debtor_name = bondService.selectDebtorName(debtor_id);
         model.put("debtor_name", debtor_name);
+        model.put("debt_interest", debt_interest);
+        model.put("creditor_id", creditor_id);
+        model.put("lawyer_id", lawyer_id);        
         
         
         return "financial/updateFinancial";
@@ -47,6 +51,7 @@ public class MainController {
     
     @PostMapping(value = "updateFinancialActivate")
     public String updateFinancialActivate(Map<String, Object> debtMap, @RequestParam("debt_interest") String debt_interest, @RequestParam("debt_condition") String debt_condition, @RequestParam("debtor_id") String debtor_id, @RequestParam("value") String debt_value, @RequestParam("debt_id") String debt_id, @RequestParam("debt_date") String debt_date, @RequestParam("debtor_name") String debtor_name, @RequestParam("lawyer_id") String lawyer_id, @RequestParam("creditor_id") String creditor_id) throws Exception {
+        System.out.println("updateFinancial_activate");
         NumberFormat numberFormat = NumberFormat.getInstance();
         
         //debt_value가 대여금 or 변제금의 금액
@@ -56,12 +61,9 @@ public class MainController {
         if(debt_condition.equals("rental")) {
             System.out.println("rental");
             for(int i = 0; i < allDebtList.size(); i++) {
-                System.out.println("!" + " allDebtList.get(i).get(debt_id) : " + allDebtList.get(i).get("debt_id") + " / debt_id : " + debt_id);
                 String tempString = String.valueOf(allDebtList.get(i).get("debt_id"));
                 if(tempString.equals(debt_id)) {
-                    System.out.println("@");
                     if(i == 0)  {
-                        System.out.println("#");
                         // 모든 이자들은 0, 이율과 대여금과 충당후 원금의 값 수정
                         debtMap.put("debt_condition", debt_condition);
                         debtMap.put("debt_liquidation", 0);
@@ -83,7 +85,6 @@ public class MainController {
                         }
                     }
                     else {
-                        System.out.println("$");
                         // debt_id를 이용하여 이전 이자와 원금값들과 계산후 update한다. 
                         
                         // (i-1)번째의 값(=allDebtList.get(i-1).get(...)) 충당후 원금 및 이자들을 가져와서 다시 계산하여 충당전 이자들과 원금들을 다시 업로드 한다.
@@ -110,7 +111,6 @@ public class MainController {
                         
                         String last_date = (String) allDebtList.get(i-1).get("debt_date");
                         long days_int = 0;
-                        //System.out.println(last_date + " " + date);
                         try {
                             SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
                             Date startDate = (Date) sdf.parse(last_date);
@@ -175,7 +175,111 @@ public class MainController {
             }
         }
         else if(debt_condition.equals("liquidation"))   {
-            System.out.println("liquidation");
+            for(int i = 0; i < allDebtList.size(); i++)    {
+                String tempId = String.valueOf(allDebtList.get(i).get("debt_id"));
+                if(tempId.equals(debt_id))   {
+                    debtMap.put("debt_condition", "liquidation");
+                    debtMap.put("debt_date", debt_date);
+                    debtMap.put("lawyer_id", lawyer_id);
+                    debtMap.put("creditor_id", creditor_id);
+                    debtMap.put("debt_id", debt_id);
+                    debtMap.put("debtor_id", debtor_id);
+                    debtMap.put("debt_interest", "");
+                    debtMap.put("debt_rental", 0);
+                    String last_after30interest_str = String.valueOf(allDebtList.get(i-1).get("debt_after30interest"));
+                    last_after30interest_str = last_after30interest_str.replace(",", "");
+                    int last_after30interest_int = Integer.valueOf(last_after30interest_str);
+                    String last_after18interest_str = String.valueOf(allDebtList.get(i-1).get("debt_after18interest"));
+                    last_after18interest_str = last_after18interest_str.replace(",", "");
+                    int last_after18interest_int = Integer.valueOf(last_after18interest_str);
+                    String last_after12interest_str = String.valueOf(allDebtList.get(i-1).get("debt_after12interest"));
+                    last_after12interest_str = last_after12interest_str.replace(",", "");
+                    int last_after12interest_int = Integer.valueOf(last_after12interest_str);
+                    
+                    // last_afterNrental == debt_Nrental
+                    String last_after30rental = String.valueOf(allDebtList.get(i-1).get("debt_after30rental"));
+                    String last_after30rental_str = last_after30rental.replace(",", "");
+                    int last_after30rental_int = Integer.valueOf(last_after30rental_str);
+                    String last_after18rental = String.valueOf(allDebtList.get(i-1).get("debt_after18rental"));
+                    String last_after18rental_str = last_after18rental.replace(",", "");
+                    int last_after18rental_int = Integer.valueOf(last_after18rental_str);
+                    String last_after12rental = String.valueOf(allDebtList.get(i-1).get("debt_after12rental"));
+                    String last_after12rental_str = last_after12rental.replace(",", "");
+                    int last_after12rental_int = Integer.valueOf(last_after12rental_str);
+                    
+                    // 변제 충당전의 원금들
+                    debtMap.put("debt_30rental", last_after30rental);
+                    debtMap.put("debt_18rental", last_after18rental);
+                    debtMap.put("debt_12rental", last_after12rental);
+                    
+                    String last_date = (String) allDebtList.get(i-1).get("debt_date");
+                    long days_int = 0;
+                    try {
+                        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
+                        Date startDate = (Date) sdf.parse(last_date);
+                        Date endDate = (Date) sdf.parse(debt_date);
+                        
+                        long difference = endDate.getTime() - startDate.getTime();
+                        
+                        days_int = difference / (24 * 60 * 60 * 1000);
+                    } catch(Exception e)    {
+                        System.out.println(e);
+                    }
+                    
+                    int debt_30interest = (int) (last_after30rental_int * 0.30 / 365 * days_int) + last_after30interest_int;
+                    int debt_18interest = (int) (last_after18rental_int * 0.18 / 365 * days_int) + last_after18interest_int;
+                    int debt_12interest = (int) (last_after12rental_int * 0.12 / 365 * days_int) + last_after12interest_int;
+                    
+                    // 변제 충당전의 이자들
+                    debtMap.put("debt_30interest", numberFormat.format(debt_30interest));
+                    debtMap.put("debt_18interest", numberFormat.format(debt_18interest));
+                    debtMap.put("debt_12interest", numberFormat.format(debt_12interest));
+                    
+                    int liquidation = Integer.valueOf(debt_value.replace(",", ""));
+                    debtMap.put("debt_liquidation", debt_value);
+                    
+                    if(liquidation >= debt_30interest + debt_18interest + debt_12interest + last_after30rental_int + last_after18rental_int + last_after12rental_int)    {
+                        String[] keyNameList = {"debt_after30interest", "debt_after18interest", "debt_after12interest", "debt_after30rental", "debt_after18rental", "debt_after12rental"};
+                        for(int j = 0; j < keyNameList.length; j++)  {
+                            debtMap.put(keyNameList[j], 0);
+                        }
+                        liquidation -= debt_30interest + debt_18interest + debt_12interest + last_after30rental_int + last_after18rental_int + last_after12rental_int;
+                        debtMap.put("debt_defendant", numberFormat.format(liquidation));                        
+                    }
+                    else    {
+                        debtMap.put("debt_defendant", 0);
+                        String[] keyNameList = {"debt_after30interest", "debt_after18interest", "debt_after12interest", "debt_after30rental", "debt_after18rental", "debt_after12rental"};
+                        int[] beforeList = {debt_30interest, debt_18interest, debt_12interest, last_after30rental_int, last_after18rental_int, last_after12rental_int};                    
+                        
+                        /* 변제금액이 들어오면 누적된 이자 및 원금들과 계산하여 리스트에 저장 */
+                        for(int j = 0; j < beforeList.length; j++ )   {
+                            if(liquidation == 0)  {
+                                break;
+                            }
+                            if(beforeList[j] != 0)    {
+                                if(liquidation > beforeList[j]) {
+                                    liquidation -= beforeList[j];
+                                    beforeList[j] = 0;
+                                }
+                                else if(liquidation == beforeList[j])   {
+                                    liquidation = 0;
+                                    beforeList[j] = 0;
+                                }
+                                else if(liquidation < beforeList[j])    {
+                                    beforeList[j] -= liquidation;
+                                    liquidation = 0;
+                                }
+                            }
+                        }
+                        
+                        // 변제 충당 후의 이자와 원금들
+                        for(int j = 0; j < beforeList.length; j++)  {
+                            debtMap.put(keyNameList[j], numberFormat.format(beforeList[j]));
+                        }
+                    }                   
+                }
+            }
+            
         }
         
         int success = bondService.updateDebt(debtMap);
@@ -187,32 +291,15 @@ public class MainController {
     @PostMapping(value = "financial")
     public ModelAndView getFinancial(@RequestParam("lawyer_id") String lawyer_id, @RequestParam("debtor_id") String debtor_id, @RequestParam("creditor_id") String creditor_id, @RequestParam("debtor_name") String debtor_name) throws Exception   {
         ModelAndView mv = new ModelAndView();
-        
-        System.out.println("lawyer_id : " + lawyer_id);
-        System.out.println("debtor_id : " + debtor_id);
-        System.out.println("creditor_id : " + creditor_id);
-        System.out.println("debtor_name : " + debtor_name);
         mv.setViewName("financial/financial_position");
         
         List<Map<String, Object>> tempList = new ArrayList<>();        
         tempList = bondService.getDebtList(debtor_id);
         String debtorName = bondService.selectDebtorName(debtor_id);
-        System.out.println("채무자 이름 : " + debtorName);
         mv.addObject("debtList", tempList);
         mv.addObject("debtor_name", debtorName);
         mv.addObject("creditor_id", creditor_id);
         mv.addObject("debtor_id", debtor_id);
-        /*
-         * String debtor_id = tempList.get(0).get("debtor_id").toString();
-        String debt_id = tempList.get(0).get("debt_id").toString();
-        String lawyer_id = tempList.get(0).get("lawyer_id").toString();
-        String creditor_id = tempList.get(0).get("creditor_id").toString();
-                
-        
-        mv.addObject("debtor_id", debtor_id);
-        mv.addObject("creditor_id", creditor_id);
-        mv.addObject("lawyer_id", lawyer_id);
-        mv.addObject("debt_id", debt_id);*/
         
         
         return mv;
@@ -247,8 +334,7 @@ public class MainController {
             } catch(Exception e)    {
                 System.out.println(e);
             }
-            
-            //System.out.println(days_int);
+           
             // 아래에서 변제금액와 연산한 결과를 저장할 변수들
             String last_after30interest = (String) debtList.get(debtList.size()-1).get("debt_after30interest");
             String last_after18interest = (String) debtList.get(debtList.size()-1).get("debt_after18interest");
@@ -257,16 +343,6 @@ public class MainController {
             String last_after30rental = (String) debtList.get(debtList.size()-1).get("debt_after30rental");
             String last_after18rental = (String) debtList.get(debtList.size()-1).get("debt_after18rental");
             String last_after12rental = (String) debtList.get(debtList.size()-1).get("debt_after12rental");
-            
-            /*
-            System.out.println("-------------문자열-------------");
-            System.out.println(last_after30rental);
-            System.out.println(last_after12rental);
-            System.out.println(last_after18rental);
-            System.out.println(last_after30interest);
-            System.out.println(last_after12interest);
-            System.out.println(last_after18interest); 
-            */
             
             Map<String, Object> debtMap = new HashMap<String, Object>();
             debtMap.put("debt_rental", 0);
@@ -302,22 +378,7 @@ public class MainController {
             String time_18interest_string = numberFormat.format(time_18interest_int);
             int time_12interest_int = (int) (last_after12rental_int * 0.12 / 365 * days_int) + last_after12interest_int;
             String time_12interest_string = numberFormat.format(time_12interest_int);
-            
-            /*
-            System.out.println("30%이자 합계액 : " + time_30interest_string + " " + time_30interest_int);
-            System.out.println("18%이자 합계액 : " + time_18interest_string + " " + time_18interest_int);
-            System.out.println("12%이자 합계액 : " + time_12interest_string + " " + time_12interest_int);
-            
-            
-            System.out.println("-------------정수화-------------");
-            System.out.println("last_after30rental_int : " + last_after30rental_int);
-            System.out.println("last_after18rental_int : " + last_after18rental_int);
-            System.out.println("last_after12rental_int : " + last_after12rental_int);
-            System.out.println("last_after30interest_int : " + last_after30interest_int);
-            System.out.println("last_after18interest_int : " + last_after18interest_int);
-            System.out.println("last_after12interest_int : " + last_after12interest_int);
-            */
-            
+          
             // lsat_afterNinterest_int에 각각 맞는 N값에 이자 합계액 대입
             last_after30interest_int = time_30interest_int;
             last_after18interest_int = time_18interest_int;
@@ -348,16 +409,6 @@ public class MainController {
             // 배열안에 값은 계산해야 될 순서대로 값이 저장되어 있으므로 순서를 수정해서는 안된다.
             String[] afterListStrings = {"debt_after30interest", "debt_after18interest", "debt_after12interest", "debt_after30rental", "debt_after18rental", "debt_after12rental"};
             int[] beforeList = {last_after30interest_int, last_after18interest_int, last_after12interest_int, last_after30rental_int, last_after18rental_int, last_after12rental_int};                    
-            
-            /*
-            for(int i = 0; i < beforeList.length; i++)    {
-                String comma = numberFormat.format(beforeList[i]);
-                System.out.print(comma + " ");
-            }
-            System.out.println();
-            
-            System.out.println("-------------변제금액과 계산-------------");
-            */
             
             /* 변제금액이 들어오면 누적된 이자 및 원금들과 계산하여 리스트에 저장 */
             for(int i = 0; i < beforeList.length; i++ )   {
@@ -456,9 +507,7 @@ public class MainController {
             String rental_string = rental.replace(",", "");
             int rental_int = Integer.valueOf(rental_string);            
             // 이자가 12%인 경우, 
-            System.out.println("if");
             if(interest.equals("12")) {
-                System.out.println(12);
                 String comma12 = numberFormat.format(rental_int + last_after12rental_int);
                 String comma18 = numberFormat.format(last_after18rental_int);
                 String comma30 = numberFormat.format(last_after30rental_int);
@@ -471,7 +520,6 @@ public class MainController {
             }
             // 이자가 18%인 경우
             else if(interest.equals("18"))    {
-                System.out.println(18);
                 String comma12 = numberFormat.format(last_after12rental_int);
                 String comma18 = numberFormat.format(rental_int + last_after18rental_int);
                 String comma30 = numberFormat.format(last_after30rental_int);
@@ -484,7 +532,6 @@ public class MainController {
             }
             // 이자가 30%인 경우
             else if(interest.equals("30"))    {
-                System.out.println(30);
                 String comma12 = numberFormat.format(last_after12rental_int);
                 String comma18 = numberFormat.format(last_after18rental_int);
                 String comma30 = numberFormat.format(rental_int + last_after30rental_int);
@@ -509,12 +556,9 @@ public class MainController {
             debtMap.put("debt_after12interest", numberFormat.format(time_12interest_int));
             debtMap.put("debt_defendant", 0);
             debtMap.put("debt_liquidation", 0);
-            System.out.println(debtMap);
-            System.out.println(debtMap.size());
             
         }
         else {
-            System.out.println("@");
             debtMap.put("debt_date", date);
             debtMap.put("debt_12interest", 0);
             debtMap.put("debt_18interest", 0);

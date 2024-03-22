@@ -22,9 +22,14 @@
 function updateFinancial(debtId, debtorId, debtInterest, lawyerId, creditorId)  {
 	document.frm.debt_id.value = debtId;
 	document.frm.debtor_id.value = debtorId;
-	document.frm.debt_interest.value = debtInterest;
-	document.frm.lawyer_id = lawyerId;
-	document.frm.creditor_id = creditorId;
+	document.frm.lawyer_id.value = lawyerId;
+	document.frm.creditor_id.value = creditorId;
+	if(debtInterest)  {		
+		document.frm.debt_interest.value = debtInterest;
+	}
+	else   {
+		document.frm.debt_interest.value = "aa";
+	}
 	document.frm.submit();
 }
 
@@ -87,7 +92,8 @@ System.out.println("===============================" + debtorName + "===========
 	        <input type="radio" name="chk_info" value="rental">대여&nbsp;&nbsp;&nbsp;
 	        이율&nbsp;:&nbsp; 
 	        <select name="interest">
-	            <option value="12" selected="selected">12%</option>
+	            <option value="5" selected="selected">5%</option>
+	            <option value="12">12%</option>
 	            <option value="18">18%</option>
                 <option value="30">30%</option>
 	        </select>
