@@ -1,22 +1,18 @@
 <%@ page language="java" contentType="text/html; charset=UTF-8"
     pageEncoding="UTF-8"%>
-<%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <!DOCTYPE html>
 <html>
 <head>
 <meta charset="EUC-KR">
-<title>채무자 추가</title>
+<title>채권자 추가</title>
 </head>
 <body>
-<%
-int lawyer_id = (int) session.getAttribute("lawyerId");
-%>
-<form action="insertDebtorActivate" method="post">
-<input type="hidden" value="<%=lawyer_id %>" name="lawyerId">
+
+<form action="insertCreditorActivate" method="post">
 <table border="2" style="width= 400px; margin-left: auto; margin-right: auto;">
     <tr style="height: 50px; text-align: center;">
         <td colspan="2" bgcolor="lightgray">
-            <h2>채무자 추가</h2>
+            <h2>채권자 추가</h2>
         </td>
     </tr>
     <tr style="height: 40px;">
@@ -24,7 +20,7 @@ int lawyer_id = (int) session.getAttribute("lawyerId");
             이름
         </td>
         <td style="width: 300px;">
-            &nbsp;&nbsp;<input type="text" name="debtor_name" style="font-size:medium; height: 25px; width: 250px;">
+            &nbsp;&nbsp;<input type="text" name="creditor_name" style="font-size:medium; height: 25px; width: 250px;">
         </td>
     </tr>
     <tr style="height: 40px;">
@@ -44,21 +40,7 @@ int lawyer_id = (int) session.getAttribute("lawyerId");
             이메일
         </td>
         <td style="width: 300px;">
-            &nbsp;&nbsp;<input type="text" name="debtor_id" style="font-size:medium; height: 25px; width: 250px;">
-        </td>
-    </tr>
-    <tr style="height: 40px;">
-        <td style="text-align: center; width: 100px; bgcolor: lightgray">
-            채권자
-        </td>
-        <td style="width: 300px;">
-            &nbsp;&nbsp;
-            <!-- <input type="text" value="" name="debtor_id" style="font-size:medium; height: 25px; width: 250px;"> -->
-            <select name="creditorList">            
-                <c:forEach var="creditorName" items="${creditorList}" varStatus="status">                    
-                    <option value="${creditorName.id }">${creditorName.creditor_name }</option>
-                </c:forEach>
-            </select> 
+            &nbsp;&nbsp;<input type="text" name="creditor_id" style="font-size:medium; height: 25px; width: 250px;">
         </td>
     </tr>
 </table>

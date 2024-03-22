@@ -19,6 +19,15 @@
 
 <body>
 <script type="text/javascript">
+function updateFinancial(debtId, debtorId, debtInterest, lawyerId, creditorId)  {
+	document.frm.debt_id.value = debtId;
+	document.frm.debtor_id.value = debtorId;
+	document.frm.debt_interest.value = debtInterest;
+	document.frm.lawyer_id = lawyerId;
+	document.frm.creditor_id = creditorId;
+	document.frm.submit();
+}
+
 function inputNullCheck()   {
     var x = document.forms["pay"]["date"].value;
     var y = document.forms["pay"]["value"].value;
@@ -115,7 +124,7 @@ System.out.println("===============================" + debtorName + "===========
         <td colspan="3" style="border-color: black; background-color: yellow;">
             변제충당 후 원금
         </td>
-        <td style="border-color:black; border-right: none; border-top: none;">
+        <td colspan="2" style="border-color:black; border-right: none; border-top: none;">
         
         </td>
     </tr>
@@ -175,7 +184,11 @@ System.out.println("===============================" + debtorName + "===========
             피고채권<br>
             (부당이득권)
         </td>
+        <td style="width: 60px;">
+            수정
+        </td>
     </tr>
+    <form name="frm" action="updateFinancial" method="post">
     <c:forEach var="tempDebtList" items="${debtList}" varStatus="status">
         <c:set var="i" value="${i+1 }" />
         <tr style="height: 25px; border-color: black;">
@@ -233,9 +246,17 @@ System.out.println("===============================" + debtorName + "===========
 	        <td>
 	            ${tempDebtList.debt_defendant}
 	        </td>
+	        <td>
+	           <input type="button" onclick="updateFinancial('${tempDebtList.debt_id}','${tempDebtList.debtor_id}','${tempDebtList.debt_interest }','${tempDebtList.lawyer_id }','${tempDebtList.creditor_id }')" value="수정" style="height: 25px; width:50px;">   
+	        </td>
         </tr>    
     </c:forEach>
-        
+    <input type="hidden" name="debtor_id" value="">
+    <input type="hidden" name="debt_id" value="">
+    <input type="hidden" name="debt_interest" value="">
+    <input type="hidden" name="lawyer_id" value="">
+    <input type="hidden" name="creditor_id" value="">
+    </form>  
 </table>
 </body>
 </html>

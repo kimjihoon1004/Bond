@@ -1,30 +1,25 @@
-<%@ page language="java" contentType="text/html; charset=EUC-KR"
-    pageEncoding="EUC-KR"%>
-<%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
-
+<%@ page language="java" contentType="text/html; charset=UTF-8"
+    pageEncoding="UTF-8"%>
 <!DOCTYPE html>
 <html>
 <head>
 <meta charset="EUC-KR">
-<title>Insert title here</title>
+<title>ì±„ê¶Œì ì¶”ê°€</title>
 </head>
 <body>
-<h1>Ã¤¹«ÀÚ ¼öÁ¤</h1>
-
 <c:choose>
     <c:when test="${success eq 1 }">
         <script type="text/javascript">
-        alert("¼öÁ¤ ¿Ï·á");
+        alert("ì±„ê¶Œì ì¶”ê°€ ì™„ë£Œ");
         location.href="selectDebtor";
         </script>        
     </c:when>
     <c:otherwise>
         <script type="text/javascript">
-        alert("¼öÁ¤ ºÒ°¡");
+        alert("ì±„ê¶Œì ì¶”ê°€ ë¶ˆê°€");
         location.href="selectDebtor";
         </script>
     </c:otherwise>
 </c:choose>
-
 </body>
 </html>
