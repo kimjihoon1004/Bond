@@ -46,5 +46,31 @@ public class BondService implements BondMapper{
         success = bondMapper.updateDebtor(debtorMap);        
         return success;
     }
+    
+    public int insertDebtor(Map<String, Object> debtorMap) throws Exception {
+        int success = 0;
+        success = bondMapper.insertDebtor(debtorMap);
+        return success;
+    }
+    
+    public int insertCreditor(Map<String, Object> creditorMap) throws Exception   {
+        int success = 0;
+        success = bondMapper.insertCreditor(creditorMap);
+        return success;
+    }
+    
+    public Map<String, Object> selectDebtById(Map<String, Object> debtMap) throws Exception {
+        return bondMapper.selectDebtById(debtMap);
+    }
    
+    public List<Map<String, Object>> selectAllDebtById(String debtor_id) throws Exception   {
+        return bondMapper.selectAllDebtById(debtor_id);
+    }
+
+    @Override
+    public int updateDebt(Map<String, Object> debtMap) throws Exception {
+        int success = 0;
+        success = bondMapper.updateDebt(debtMap);
+        return success;
+    }
 }

@@ -10,6 +10,23 @@
         SELECT * FROM debtor WHERE id = #{debtor_id};
     </select>
     
+    <insert id="insertDebtor" parameterType="java.util.Map">
+        INSERT INTO debtor(debtor_id, debtor_name, debtor_hp, creditorId, lawyerId) 
+        VALUES(#{debtor_id}, #{debtor_name}, #{debtor_hp}, #{creditorId}, #{lawyerId});        
+    </insert>
+    
+    <insert id="insertCreditor" parameterType="java.util.Map">
+        INSERT INTO creditor(creditor_id, creditor_name, creditor_hp) 
+        VALUES(#{creditor_id}, #{creditor_name}, #{creditor_hp});
+    </insert>
+    
+    <update id="updateDebt" parameterType="java.util.Map">
+        UPDATE debt SET debt_date = #{debt_date}, debt_rental = #{debt_rental}, debt_interest = #{debt_interest}, debt_30rental = #{debt_30rental}, debt_18rental = #{debt_18rental}, debt_12rental = #{debt_12rental},
+        debt_30interest = #{debt_30interest}, debt_18interest = #{debt_18interest}, debt_12interest = #{debt_12interest}, debt_liquidation = #{debt_liquidation}, debt_after30interest = #{debt_after30interest}, debt_after18interest = #{debt_after18interest}, debt_after12interest = #{debt_after12interest},
+        debt_after30rental = #{debt_after30rental}, debt_after18rental = #{debt_after18rental}, debt_after12rental = #{debt_after12rental}, debt_condition = #{debt_condition} 
+        WHERE debt_id = #{debt_id};
+    </update>
+    
     <insert id="insertDebt" parameterType="java.util.Map">
         INSERT INTO debt(creditor_id, debtor_id, debt_interest, debt_rental, lawyer_id, debt_date, debt_30rental, debt_18rental, debt_12rental,
          debt_30interest, debt_18interest, debt_12interest, debt_liquidation,
@@ -32,4 +49,14 @@
     <update id="updateDebtor" parameterType="java.util.Map">
         UPDATE debtor SET debtor_id = #{debtor_id}, debtor_name = #{debtor_name}, debtor_hp = #{debtor_hp}, creditorId = #{creditor_id} WHERE id = #{id};
     </update>
+    
+    <select id="selectDebtById" parameterType="java.util.Map" resultType="java.util.Map">
+        SELECT * FROM debt WHERE debt_id = #{debt_id} AND debtor_id = #{debtor_id};
+    </select>
+    
+    <select id="selectAllDebtById" parameterType="String" resultType="java.util.Map">
+        SELECT * FROM debt WHERE debtor_id = #{debtor_id};
+    </select>
+    
+
 </mapper>
