@@ -56,7 +56,7 @@
                     <select name="debt_interest">
                         <%
                         String debt_interest = request.getParameter("debt_interest");
-                        String interest[] = {"12%", "18%", "30%"}; 
+                        String interest[] = {"5%", "12%", "18%", "30%"}; 
                         for(int i = 0; i < interest.length; i++)    {
                             if(debt_interest.equals(interest[i]))    {%>                        
                                 <option value="<%=interest[i] %>" selected="selected"><%=interest[i] %></option>

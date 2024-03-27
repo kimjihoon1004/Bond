@@ -295,8 +295,10 @@ public class MainController {
         
         List<Map<String, Object>> tempList = new ArrayList<>();        
         tempList = bondService.getDebtList(debtor_id);
+        int tempListSize = tempList.size();
         String debtorName = bondService.selectDebtorName(debtor_id);
         mv.addObject("debtList", tempList);
+        mv.addObject("debtListSize", tempListSize);
         mv.addObject("debtor_name", debtorName);
         mv.addObject("creditor_id", creditor_id);
         mv.addObject("debtor_id", debtor_id);
@@ -664,7 +666,6 @@ public class MainController {
     
     @GetMapping(value = "login_page")
     public String getLoginPage()    {
-        System.out.println("login_page");
         return "login/login_page";
     }
     
@@ -826,5 +827,13 @@ public class MainController {
         
         
         return mv;
+    }
+    
+    @PostMapping(value = "excel")
+    public String getExcel(@RequestParam("category") List<String> category, @RequestParam("excelStatus") String execelStatus, @RequestParam("debtor_id") String debtor_id, @RequestParam("creditor_id") String creditor_id, @RequestParam("lawyer_id") String lawyer_id, @RequestParam("debtor_name") String debtor_name, @RequestParam("num1") String num1, @RequestParam("num2") String num2)    {        
+        System.out.println(category);
+        System.out.println(category.get(0));
+        System.out.println(category.get(1));
+        return "financial/excel";
     }
 }

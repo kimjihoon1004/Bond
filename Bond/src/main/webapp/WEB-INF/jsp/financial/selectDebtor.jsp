@@ -1,5 +1,5 @@
-<%@ page language="java" contentType="text/html; charset=EUC-KR"
-    pageEncoding="EUC-KR"%>
+<%@ page language="java" contentType="text/html; charset=UTF-8"
+    pageEncoding="UTF-8"%>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <%@ page import="java.util.List" %>
 <%@ page import="java.util.Map" %>
@@ -7,7 +7,7 @@
 <!DOCTYPE html>
 <html>
 <head>
-<meta charset="EUC-KR">
+<meta charset="UTF-8">
 <title>Insert title here</title>
 <script>
 function goFinancial(debtorId, creditorId, debtorName) {
@@ -25,21 +25,21 @@ function goFinancial(debtorId, creditorId, debtorName) {
 <table border="2" style="margin-left: auto; margin-right: auto;">
     <tr style="height: 50px; text-align: center;">
         <td colspan = "4" bgcolor = "lightgray" class = "style1">
-            <h2>${lawyer_name}´ÔÀÇ Bond</h2>
+            <h2>${lawyer_name}ë‹˜ì˜ Bond</h2>
         </td>                   
     </tr>
     <tr>
         <td style="text-align: center; width: 130px; bgcolor: lightgray">
-            ÀÌ¸§
+            ì´ë¦„
         </td>
         <td style="text-align: center; width: 300px; bgcolor: lightgray">
-            ÇÚµåÆù¹øÈ£
+            í•¸ë“œí°ë²ˆí˜¸
         </td>
         <td style="text-align: center; width: 100px;">
-            ¼±ÅÃ
+            ì„ íƒ
         </td>
         <td style="text-align: center; width: 100px;">
-            ¼öÁ¤
+            ìˆ˜ì •
         </td>
     </tr>
     <c:forEach var="debtorList" items="${debtorList }" varStatus="status">
@@ -51,10 +51,10 @@ function goFinancial(debtorId, creditorId, debtorName) {
             ${debtorList.debtor_hp } 
         </td>
         <td style="text-align: center; width: 100px;">
-            <input type="button" onclick="goFinancial('${debtorList.id}','${debtorList.creditorId }','${debtorList.debtor_name}')" value="¼±ÅÃ" style="font-size:medium; width:60px; height:30px;">
+            <input type="button" onclick="goFinancial('${debtorList.id}','${debtorList.creditorId }','${debtorList.debtor_name}')" value="ì„ íƒ" style="font-size:medium; width:60px; height:30px;">
         </td>
         <td style="text-align: center; width: 100px;">
-            <input type="button" onclick="location.href='updateDebtor?id=${debtorList.id}'" value="¼öÁ¤" style="font-size:medium; width:60px; height:30px;">
+            <input type="button" onclick="location.href='updateDebtor?id=${debtorList.id}'" value="ìˆ˜ì •" style="font-size:medium; width:60px; height:30px;">
         </td>
     </tr>
     </c:forEach>
@@ -65,9 +65,9 @@ function goFinancial(debtorId, creditorId, debtorName) {
 </form>
 <br>
 <div style="text-align: center;">
-    <input type="button" value="Ã¤¹«ÀÚ Ãß°¡" onclick = "location.href='insertDebtor'" style="font-size:medium; width:100px; height:30px;"/>&nbsp;&nbsp;
-    <input type="button" value="Ã¤±ÇÀÚ Ãß°¡" onclick="location.href='insertCreditor'" style="font-size:medium; width:100px; height:30px;"/>&nbsp;&nbsp;
-    <input type="button" value="·Î±×¾Æ¿ô" onclick="location.href='logout'" style="font-size:medium; width:100px; height:30px;"/>   
+    <input type="button" value="ì±„ë¬´ì ì¶”ê°€" onclick = "location.href='insertDebtor'" style="font-size:medium; width:100px; height:30px;"/>&nbsp;&nbsp;
+    <input type="button" value="ì±„ê¶Œì ì¶”ê°€" onclick="location.href='insertCreditor'" style="font-size:medium; width:100px; height:30px;"/>&nbsp;&nbsp;
+    <input type="button" value="ë¡œê·¸ì•„ì›ƒ" onclick="location.href='logout'" style="font-size:medium; width:100px; height:30px;"/>   
 </div>
 </body>
 </html>

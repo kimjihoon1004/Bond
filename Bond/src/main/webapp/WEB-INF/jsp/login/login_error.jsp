@@ -1,9 +1,9 @@
-<%@ page language="java" contentType="text/html; charset=EUC-KR"
-    pageEncoding="EUC-KR"%>
+<%@ page language="java" contentType="text/html; charset=UTF-8"
+    pageEncoding="UTF-8"%>
 <!DOCTYPE html>
 <html>
 <head>
-<meta charset="EUC-KR">
+<meta charset="UTF-8">
 <title>Insert title here</title>
 </head>
 <body>
@@ -13,8 +13,8 @@ String iidCheck = (String) session.getAttribute("uID");
 if(iidCheck == null || "".equals(iidCheck) || iidCheck == "") {
 %>
     <script>
-    alert("·Î±×ÀÎ ÈÄ »ç¿ëÇÏ¼¼¿ä.");
-    location.href="login_page"; // ·Î±×ÀÎ ÆäÀÌÁö °æ·Î¿¡ µû¶ó ¼öÁ¤
+    alert("ë¡œê·¸ì¸ í›„ ì‚¬ìš©í•˜ì„¸ìš”.");
+    location.href="login_page"; // ë¡œê·¸ì¸ í˜ì´ì§€ ê²½ë¡œì— ë”°ë¼ ìˆ˜ì •
     </script>
 <%
 }

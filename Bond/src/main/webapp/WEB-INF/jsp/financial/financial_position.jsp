@@ -3,22 +3,23 @@
 <%@page import="java.util.Map"%>
 <%@page import="java.util.List"%>
 <%@page import="java.util.ArrayList"%>
-<%@ page language="java" contentType="text/html; charset=EUC-KR"
-    pageEncoding="EUC-KR"%>
+<%@ page language="java" contentType="text/html; charset=UTF-8"
+    pageEncoding="UTF-8"%>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <%@ page import="com.eugeneprogram.service.*"%>
 <%@ include file="../login/login_error.jsp" %>
 
-<!-- lawyer ·Î±×ÀÎ id, lawyer°¡ Ã¤¹«ÀÚ¸¦ ¼±ÅÃÇÏ¸é ÇØ´ç Ã¤¹«ÀÚÀÇ id, Ã¤¹«ÀÚÀÇ id¿¡ ¿¬°áµÈ Ã¤±ÇÀÚÀÇ id±îÁö 3°¡Áö id °¡Á®¿Ã °Í -->
+<!-- lawyer ë¡œê·¸ì¸ id, lawyerê°€ ì±„ë¬´ìë¥¼ ì„ íƒí•˜ë©´ í•´ë‹¹ ì±„ë¬´ìì˜ id, ì±„ë¬´ìì˜ idì— ì—°ê²°ëœ ì±„ê¶Œìì˜ idê¹Œì§€ 3ê°€ì§€ id ê°€ì ¸ì˜¬ ê²ƒ -->
 <!DOCTYPE html>
 <html>
 <head>
-<meta charset="EUC-KR">
-<title>Ãæ´çÇ¥</title>
+<meta charset="UTF-8">
+<title>ì¶©ë‹¹í‘œ</title>
 </head>
 
 <body>
 <script type="text/javascript">
+
 function updateFinancial(debtId, debtorId, debtInterest, lawyerId, creditorId)  {
 	document.frm.debt_id.value = debtId;
 	document.frm.debtor_id.value = debtorId;
@@ -33,20 +34,92 @@ function updateFinancial(debtId, debtorId, debtInterest, lawyerId, creditorId)  
 	document.frm.submit();
 }
 
+function entireExcelize()   {
+	document.excelize.excelStatus.value = "1";
+	document.excelize.submit();
+	
+}
+
+function check()    {
+	var count = 0;
+	var length = document.excelize.category.length;
+	var i = 0;
+	while(i < length)  {
+		if(document.excelize.category[i].checked) {
+			count++;
+		}
+		i++;
+	}
+	if(count == 0) {
+		alert("ì¹´í…Œê³ ë¦¬ë¥¼ í•œê°œì´ìƒ ì²´í¬í•˜ì„¸ìš”.");
+		return false;
+	}
+	return true;
+}
+
+function numInputNullCheck() {
+	var x = document.forms["excelize"]["num1"].value;
+	var y = document.forms["excelize"]["num2"].value;
+	
+	if(x === "")   {
+		alert("ì‹œì‘ìˆœë²ˆì„ ì…ë ¥í•˜ì„¸ìš”");
+		document.excelize.num1.focus();
+		return false;
+	}
+	if(y === "")   {
+		alert("ëìˆœë²ˆì„ ì…ë ¥í•˜ì„¸ìš”");
+		document.excelize.num2.focus();
+		return false;
+	}
+
+    if(Number(x) > Number(y))   {
+        alert("ì‹œì‘ìˆœë²ˆê³¼ ëìˆœë²ˆì˜ ìˆœì„œê°€ ì˜¬ë°”ë¥´ì§€ ì•ŠìŠµë‹ˆë‹¤.");
+        document.excelize.num1.focus();
+        return false;
+    }
+    
+    if(Number(x) > Number(${debtListSize})) {
+    	alert("ì‹œì‘ìˆœë²ˆì˜ ê°’ì´ ìˆœë²ˆì„ ì´ˆê³¼í•˜ì˜€ìŠµë‹ˆë‹¤.");
+    	document.excelize.num1.focus();
+        return false;
+    }
+    
+    if(Number(y) > Number(${debtListSize})) {
+        alert("ëìˆœë²ˆì˜ ê°’ì´ ìˆœë²ˆì„ ì´ˆê³¼í•˜ì˜€ìŠµë‹ˆë‹¤.");
+        document.excelize.num2.focus();
+        return false;
+    }
+	
+	return true;
+}
+
+function excelizeCheck()    {
+	if(!numInputNullCheck())   {
+		return false;
+	}
+	if(!check())   {
+		return false;
+	}
+	return true;
+}
+
+
 function inputNullCheck()   {
     var x = document.forms["pay"]["date"].value;
     var y = document.forms["pay"]["value"].value;
     
     if(x === "") {
-    	alert("³¯Â¥¸¦ ÀÔ·ÂÇÏ¼¼¿ä.");
+    	alert("ë‚ ì§œë¥¼ ì…ë ¥í•˜ì„¸ìš”.");
     	document.pay.date.focus();
     	return false;
     }
     if(y === "") {
-    	alert("±İ¾×À» ÀÔ·ÂÇÏ¼¼¿ä.");
+    	alert("ê¸ˆì•¡ì„ ì…ë ¥í•˜ì„¸ìš”.");
     	document.pay.value.focus();
     	return false;
     }
+    
+    
     return true;
 }
 function validateForm() {
@@ -62,12 +135,12 @@ function validateForm() {
     }
 
     if (!formValid) {
-    	alert("º¯Á¦ or ´ë¿©¸¦ ¼±ÅÃÇÏ¼¼¿ä.");
+    	alert("ë³€ì œ or ëŒ€ì—¬ë¥¼ ì„ íƒí•˜ì„¸ìš”.");
     	return false;
     }
 }
 
-function submitForm()   {
+function moneySubmitForm()   {
 	return inputNullCheck() && validateForm();
 }
 </script>
@@ -79,56 +152,125 @@ System.out.println(uID + " " + uPW + " " + lawyerId);
 String debtorName = request.getParameter("debtor_name");
 System.out.println("===============================" + debtorName + "===============================");
 %>
-<!-- white-space: nowrap; ¹®ÀÚ ³»¿ëÀÌ ¸ğ´ÏÅÍÈ­¸é¸¸Å­¿¡¼­ ÁÙÀ» ³»¸®Áö ¾Ê°í ³¡±îÁö Ãâ·ÂÇÏ´Â ¼Ó¼º -->
-<h2>[ ${debtor_name }´ÔÀÇ º¯Á¦Ãæ´çÇ¥ ]</h2>
-<form name="pay" action="check_info" method="post" onsubmit="return submitForm()">
+<!-- white-space: nowrap; ë¬¸ì ë‚´ìš©ì´ ëª¨ë‹ˆí„°í™”ë©´ë§Œí¼ì—ì„œ ì¤„ì„ ë‚´ë¦¬ì§€ ì•Šê³  ëê¹Œì§€ ì¶œë ¥í•˜ëŠ” ì†ì„± -->
+<h2>[ ${debtor_name }ë‹˜ì˜ ë³€ì œì¶©ë‹¹í‘œ ]</h2>
+<form name="pay" action="check_info" method="post" onsubmit="return moneySubmitForm()">
 <input type="hidden" name="creditorId" value="${creditor_id }">
 <input type="hidden" name="debtorId" value="${debtor_id }">
-<table border="1" style="broder-color: black; width: 830px; height: 50px;">
-    <tr>
-        <td>
-	        &nbsp;
-	        <input type="radio" name="chk_info" value="liquidation">º¯Á¦
-	        <input type="radio" name="chk_info" value="rental">´ë¿©&nbsp;&nbsp;&nbsp;
-	        ÀÌÀ²&nbsp;:&nbsp; 
-	        <select name="interest">
-	            <option value="5" selected="selected">5%</option>
-	            <option value="12">12%</option>
-	            <option value="18">18%</option>
-                <option value="30">30%</option>
-	        </select>
-	        &nbsp;&nbsp;
-	        ³¯Â¥&nbsp;:&nbsp;
-	        <input type="date" name="date" style="width: 100px; heigth:50px;">&nbsp;&nbsp;
-	        ±İ¾×&nbsp;:&nbsp;
-	        <input type="text" id="value" name="value" oninput="this.value = this.value.replace(/[^0-9]/g, '').replace(/\d(?=(?:\d{3})+$)/g, '$&,')" style="width: 200px; heigth:50px;">¿ø&nbsp;&nbsp;
-	        <input type="submit" style="width: 60px; height:30px;" value="³³ºÎ">
-	    </td>
-    </tr>
-</table>
+<fieldset style="broder-color: black; width: 830px; height: 50px;">
+    <legend>ëŒ€ì—¬ or ë³€ì œ</legend>
+    &nbsp;
+    <input type="radio" name="chk_info" value="liquidation">ë³€ì œ
+    <input type="radio" name="chk_info" value="rental">ëŒ€ì—¬&nbsp;&nbsp;&nbsp;
+    ì´ìœ¨&nbsp;:&nbsp; 
+    <select name="interest">
+        <option value="5" selected="selected">5%</option>
+        <option value="12">12%</option>
+        <option value="18">18%</option>
+           <option value="30">30%</option>
+    </select>
+    &nbsp;&nbsp;
+    ë‚ ì§œ&nbsp;:&nbsp;
+    <input type="date" name="date" style="width: 100px; heigth:50px;">&nbsp;&nbsp;
+    ê¸ˆì•¡&nbsp;:&nbsp;
+    <input type="text" id="value" name="value" oninput="this.value = this.value.replace(/[^0-9]/g, '').replace(/\d(?=(?:\d{3})+$)/g, '$&,')" style="width: 200px; heigth:50px;">ì›&nbsp;&nbsp;
+    <input type="submit" style="width: 60px; height:30px;" value="ë‚©ë¶€">
+</fieldset>
+</form>
+<script>
+  // ë¬¸ì„œê°€ ë¡œë“œë˜ë©´ ì‹¤í–‰
+  document.addEventListener('DOMContentLoaded', function() {
+    // í¼ ìš”ì†Œ ì„ íƒ
+    var form = document.getElementsByName('pay')[0];
+    
+    // í¼ ë‚´ì—ì„œì˜ í‚¤ë‹¤ìš´ ì´ë²¤íŠ¸ ê°ì§€
+    form.addEventListener('keydown', function(event) {
+      // ì—”í„° í‚¤ê°€ ëˆŒë ¸ëŠ”ì§€ í™•ì¸ (ì—”í„° í‚¤ì˜ keyCodeëŠ” 13ì…ë‹ˆë‹¤)
+      if (event.keyCode === 13) {
+        // ê¸°ë³¸ ë™ì‘ ë°©ì§€ (ì—”í„° í‚¤ë¡œ ì¸í•œ í¼ ì œì¶œ ë°©ì§€)
+        event.preventDefault();
+        // í•„ìš”í•œ ê²½ìš° ì—¬ê¸°ì— ì¶”ê°€ ì½”ë“œë¥¼ ì‚½ì…
+        // í•¨ìˆ˜ ì‹¤í–‰ ì¤‘ë‹¨
+        return false;
+      }
+    });
+  });
+</script>
+&nbsp;&nbsp;&nbsp;&nbsp;
+<form action="excel" name="excelize" method="post" onsubmit="return excelizeCheck()">
+<input type="hidden" name="excelStatus" value="0">
+<input type="hidden" name="debtor_id" value="${debtor_id }">
+<input type="hidden" name="creditor_id" value="${creditor_id }">
+<input type="hidden" name="lawyer_id" value="${lawyer_id }">
+<input type="hidden" name="debtor_name" value="${debtor_name }">
+<fieldset style="broder-color: black; width: 1230px; height: 85px;">
+     <legend>ì—‘ì…€í™”</legend>
+     &nbsp;<input type="checkbox" name="category" value="ìˆœë²ˆ">ìˆœë²ˆ&nbsp;
+     <input type="checkbox" name="category" value="ë‚ ì§œ">ë‚ ì§œ&nbsp;
+     <input type="checkbox" name="category" value="ëŒ€ì—¬ê¸ˆ">ëŒ€ì—¬ê¸ˆ&nbsp;
+     <input type="checkbox" name="category" value="ì ìš©ì´ìœ¨">ì ìš©ì´ìœ¨&nbsp;
+     <input type="checkbox" name="category" value="30%ì›ê¸ˆ(ì¶©ë‹¹ì „)">30%ì›ê¸ˆ(ì¶©ë‹¹ì „)&nbsp;
+     <input type="checkbox" name="category" value="18%ì›ê¸ˆ(ì¶©ë‹¹ì „)">18%ì›ê¸ˆ(ì¶©ë‹¹ì „)&nbsp;
+     <input type="checkbox" name="category" value="12%ì›ê¸ˆ(ì¶©ë‹¹ì „)">12%ì›ê¸ˆ(ì¶©ë‹¹ì „)&nbsp;
+     <input type="checkbox" name="category" value="30%ì´ì(ì¶©ë‹¹ì „)">30%ì´ì(ì¶©ë‹¹ì „)&nbsp;
+     <input type="checkbox" name="category" value="18%ì´ì(ì¶©ë‹¹ì „)">18%ì´ì(ì¶©ë‹¹ì „)&nbsp;
+     <input type="checkbox" name="category" value="12%ì´ì(ì¶©ë‹¹ì „)">12%ì´ì(ì¶©ë‹¹ì „)&nbsp;<br>
+     &nbsp;<input type="checkbox" name="category" value="ë³€ì œê¸ˆì•¡">ë³€ì œê¸ˆì•¡&nbsp;
+     <input type="checkbox" name="category" value="30%ì›ê¸ˆ(ì¶©ë‹¹í›„)">30%ì›ê¸ˆ(ì¶©ë‹¹í›„)&nbsp;
+     <input type="checkbox" name="category" value="18%ì›ê¸ˆ(ì¶©ë‹¹í›„)">18%ì›ê¸ˆ(ì¶©ë‹¹í›„)&nbsp;
+     <input type="checkbox" name="category" value="12%ì›ê¸ˆ(ì¶©ë‹¹í›„)">12%ì›ê¸ˆ(ì¶©ë‹¹í›„)&nbsp;
+     <input type="checkbox" name="category" value="30%ì´ì(ì¶©ë‹¹í›„)">30%ì´ì(ì¶©ë‹¹í›„)&nbsp;
+     <input type="checkbox" name="category" value="18%ì´ì(ì¶©ë‹¹í›„)">18%ì´ì(ì¶©ë‹¹í›„)&nbsp;
+     <input type="checkbox" name="category" value="12%ì´ì(ì¶©ë‹¹í›„)">12%ì´ì(ì¶©ë‹¹í›„)&nbsp;
+     <input type="checkbox" name="category" value="í”¼ê³ ì±„ê¶Œ">í”¼ê³ ì±„ê¶Œ&nbsp;
+     <br>
+     &nbsp;
+     ìˆœë²ˆì…ë ¥&nbsp;:&nbsp;
+     <input type="text" name="num1" placeholder="ì‹œì‘ìˆœë²ˆ" style="width: 100px; height: 20px; font-size: medium;">&nbsp;~&nbsp;
+     <input type="text" name="num2" placeholder="ëìˆœë²ˆ" style="width: 100px; height: 20px; font-size: medium;">&nbsp;
+     <input type="submit" value="ë¶€ë¶„ ì—‘ì…€í™”" name="part" style="width: 100px; height: 25px;">
+     &nbsp;&nbsp;|&nbsp;&nbsp;<input type="button" value="ì „ì²´ ì—‘ì…€í™”" name="entire" onclick="entireExcelize()" style="width: 100px; height: 25px;">
+</fieldset>
 </form>
 <br>
-<!--  
-<input type="button" onclick="location.href = 'liquidationButton?debtor_id=${debtor_id}'" style="width: 100px; height: 30px;" value="º¯Á¦">
-<input type="button" onclick="location.href = 'rentalButton?debtor_id=${debtor_id}'" style="width: 100px; height: 30px;" value="´ë¿©">
--->
+
+<script>
+  // ë¬¸ì„œê°€ ë¡œë“œë˜ë©´ ì‹¤í–‰
+  document.addEventListener('DOMContentLoaded', function() {
+    // í¼ ìš”ì†Œ ì„ íƒ
+    var form = document.getElementsByName('excelize')[0];
+    
+    // í¼ ë‚´ì—ì„œì˜ í‚¤ë‹¤ìš´ ì´ë²¤íŠ¸ ê°ì§€
+    form.addEventListener('keydown', function(event) {
+      // ì—”í„° í‚¤ê°€ ëˆŒë ¸ëŠ”ì§€ í™•ì¸ (ì—”í„° í‚¤ì˜ keyCodeëŠ” 13ì…ë‹ˆë‹¤)
+      if (event.keyCode === 13) {
+        // ê¸°ë³¸ ë™ì‘ ë°©ì§€ (ì—”í„° í‚¤ë¡œ ì¸í•œ í¼ ì œì¶œ ë°©ì§€)
+        event.preventDefault();
+        // í•„ìš”í•œ ê²½ìš° ì—¬ê¸°ì— ì¶”ê°€ ì½”ë“œë¥¼ ì‚½ì…
+        // í•¨ìˆ˜ ì‹¤í–‰ ì¤‘ë‹¨
+        return false;
+      }
+    });
+  });
+</script>
+
 <table border="1" style="border-color:white; width: 2380px; text-align: center; border-collapse: collapse; ">
     <tr style="height: 30px;">
         <td colspan="4" style="border-color: black; border-top: none; border-left: none;">        
         </td>
         <td colspan="3" style="border-color: black; background-color: yellow;">
-            ÇØ´çÀÏ±îÁö ¹ß»ıÇÑ º¯Á¦ Ãæ´ç ÀüÀÇ ¿ø±İ
+            í•´ë‹¹ì¼ê¹Œì§€ ë°œìƒí•œ ë³€ì œ ì¶©ë‹¹ ì „ì˜ ì›ê¸ˆ
         </td>
         <td colspan="3" style="border-color: black; background-color: yellow;">
-            ÇØ´çÀÏ±îÁö ¹ß»ıÇÑ º¯Á¦ Ãæ´ç ÀüÀÇ ÀÌÀÚ
+            í•´ë‹¹ì¼ê¹Œì§€ ë°œìƒí•œ ë³€ì œ ì¶©ë‹¹ ì „ì˜ ì´ì
         </td>
         <td style="border-color: black; border-top:none;">        
         </td>
         <td colspan="3" style="border-color: black; background-color: yellow;">
-            º¯Á¦Ãæ´ç ÈÄ ÀÌÀÚ
+            ë³€ì œì¶©ë‹¹ í›„ ì´ì
         </td>
         <td colspan="3" style="border-color: black; background-color: yellow;">
-            º¯Á¦Ãæ´ç ÈÄ ¿ø±İ
+            ë³€ì œì¶©ë‹¹ í›„ ì›ê¸ˆ
         </td>
         <td colspan="2" style="border-color:black; border-right: none; border-top: none;">
         
@@ -136,62 +278,62 @@ System.out.println("===============================" + debtorName + "===========
     </tr>
     <tr style="height: 25px; border-color: black; background-color: yellow;">
         <td style="width: 40px;">
-            ¼ø¹ø
+            ìˆœë²ˆ
         </td>   
         <td style="width: 100px;">
-            ³¯Â¥
+            ë‚ ì§œ
         </td>
         <td style="width: 110px;">
-            ´ë¿©±İ
+            ëŒ€ì—¬ê¸ˆ
         </td>
         <td style="width: 80px;">
-            Àû¿ëÀÌÀ²
+            ì ìš©ì´ìœ¨
         </td>
         <td style="width: 150px;">
-            30%¿ø±İ(´©Àû)
+            30%ì›ê¸ˆ(ëˆ„ì )
         </td>
         <td style="width: 150px;">
-            18%¿ø±İ(´©Àû)
+            18%ì›ê¸ˆ(ëˆ„ì )
         </td>
         <td style="width: 150px;">
-            12%¿ø±İ(´©Àû)
+            12%ì›ê¸ˆ(ëˆ„ì )
         </td>
         <td style="width: 150px;">
-            30%ÀÌÀÚ(ÇÕ°è¾×)
+            30%ì´ì(í•©ê³„ì•¡)
         </td>
         <td style="width: 150px;">
-            18%ÀÌÀÚ(ÇÕ°è¾×)
+            18%ì´ì(í•©ê³„ì•¡)
         </td>
         <td style="width: 150px;">
-            12%ÀÌÀÚ(ÇÕ°è¾×)
+            12%ì´ì(í•©ê³„ì•¡)
         </td>
         <td style="width: 150px; color: blue;">
-            º¯Á¦±İ¾×
+            ë³€ì œê¸ˆì•¡
         </td>
         <td style="width: 150px;">
-            30%ÀÌÀÚ(Ãæ´çÈÄ)
+            30%ì´ì(ì¶©ë‹¹í›„)
         </td>
         <td style="width: 150px;">
-            18%ÀÌÀÚ(Ãæ´çÈÄ)
+            18%ì´ì(ì¶©ë‹¹í›„)
         </td>
         <td style="width: 150px;">
-            12%ÀÌÀÚ(Ãæ´çÈÄ)
+            12%ì´ì(ì¶©ë‹¹í›„)
         </td>
         <td style="width: 150px;">
-            30%¿ø±İ(Ãæ´çÈÄ)
+            30%ì›ê¸ˆ(ì¶©ë‹¹í›„)
         </td>
         <td style="width: 150px; color: red;">
-            18%¿ø±İ(Ãæ´çÈÄ)
+            18%ì›ê¸ˆ(ì¶©ë‹¹í›„)
         </td>
         <td style="width: 150px; color: red;">
-            12%¿ø±İ(Ãæ´çÈÄ)
+            12%ì›ê¸ˆ(ì¶©ë‹¹í›„)
         </td>
         <td style="width: 100px; font-size:small;">
-            ÇÇ°íÃ¤±Ç<br>
-            (ºÎ´çÀÌµæ±Ç)
+            í”¼ê³ ì±„ê¶Œ<br>
+            (ë¶€ë‹¹ì´ë“ê¶Œ)
         </td>
         <td style="width: 60px;">
-            ¼öÁ¤
+            ìˆ˜ì •
         </td>
     </tr>
     <form name="frm" action="updateFinancial" method="post">
@@ -253,7 +395,7 @@ System.out.println("===============================" + debtorName + "===========
 	            ${tempDebtList.debt_defendant}
 	        </td>
 	        <td>
-	           <input type="button" onclick="updateFinancial('${tempDebtList.debt_id}','${tempDebtList.debtor_id}','${tempDebtList.debt_interest }','${tempDebtList.lawyer_id }','${tempDebtList.creditor_id }')" value="¼öÁ¤" style="height: 25px; width:50px;">   
+	           <input type="button" onclick="updateFinancial('${tempDebtList.debt_id}','${tempDebtList.debtor_id}','${tempDebtList.debt_interest }','${tempDebtList.lawyer_id }','${tempDebtList.creditor_id }')" value="ìˆ˜ì •" style="height: 25px; width:50px;">   
 	        </td>
         </tr>    
     </c:forEach>
