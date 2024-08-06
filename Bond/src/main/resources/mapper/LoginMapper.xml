@@ -10,11 +10,27 @@
         SELECT lawyer_id FROM lawyer WHERE lawyer_hp = #{lawyer_hp} AND lawyer_name = #{lawyer_name};
     </select>
     
-    <select id="checkPw" resultType="Integer" parameterType="java.util.Map">
-        SELECT * FROM lawyer WHERE lawyer_id = #{lawyer_id} AND lawyer_hp = #{lawyer_hp} AND lawyer_name = #{lawyer_name};
+    <select id="duplicateId" resultType="Integer" parameterType="String">
+        SELECT count(lawyer_id) FROM lawyer WHERE lawyer_id = #{id};
+    </select>
+    
+    <select id="checkPw" resultType="int" parameterType="java.util.Map">
+        SELECT count(*) as count FROM lawyer WHERE lawyer_id = #{lawyer_id} AND lawyer_hp = #{lawyer_hp} AND lawyer_name = #{lawyer_name};
     </select>
     
     <select id="selectDebtor" resultType="java.util.Map" parameterType="Integer">
         SELECT * FROM debtor WHERE lawyerId = #{lawyer_id};
     </select>
+    
+    <update id="updateLawyerPw" parameterType="String">
+        update lawyer set lawyer_pw = password(#{pw}) where lawyer_id = #{id} and lawyer_name = #{name} and lawyer_hp = #{hp};
+    </update>
+    
+    <insert id="insertLawyer" parameterType="String">
+        INSERT INTO lawyer(lawyer_id, lawyer_pw, lawyer_hp, lawyer_name) VALUES(#{id}, PASSWORD(#{pw}), #{hp}, #{name});
+    </insert>
+    
+    <update id="updateLawyer" parameterType="String">
+        update lawyer set lawyer_name = "${name}", lawyer_hp = "${hp}", lawyer_id = "${id}" where id = "${pk}";
+    </update>
 </mapper>

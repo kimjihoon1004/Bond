@@ -1,12 +1,29 @@
 package com.eugeneprogram.controller;
 
 import java.util.Date;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.net.URLEncoder;
 import java.text.NumberFormat;
 import java.text.SimpleDateFormat;
+import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+
+// 엑셀화에 추가됨
+import org.apache.poi.ss.usermodel.Cell;
+import org.apache.poi.ss.usermodel.FillPatternType;
+import org.apache.poi.ss.usermodel.IndexedColors;
+import org.apache.poi.ss.usermodel.Row;
+import org.apache.poi.xssf.usermodel.XSSFCellStyle;
+import org.apache.poi.xssf.usermodel.XSSFCreationHelper;
+
+import org.apache.poi.xssf.usermodel.XSSFSheet;
+import org.apache.poi.xssf.usermodel.XSSFWorkbook;
+
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -14,10 +31,13 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.servlet.ModelAndView;
 
+import com.eugeneprogram.dao.LoginMapper;
 import com.eugeneprogram.service.BondService;
 import com.eugeneprogram.service.LoginService;
 
+import jakarta.servlet.ServletOutputStream;
 import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
 import jakarta.servlet.http.HttpSession;
 
 @Controller
@@ -29,7 +49,6 @@ public class MainController {
     
     @PostMapping(value = "updateFinancial")
     public String getUpdateFinancial(Map<String, Object> model, @RequestParam("debtor_id") String debtor_id, @RequestParam("debt_id") String debt_id, @RequestParam("debt_interest") String debt_interest, @RequestParam("lawyer_id") String lawyer_id, @RequestParam("creditor_id") String creditor_id) throws Exception  {        
-        System.out.println("updateFinancial");
         model.put("debtor_id", debtor_id);
         model.put("debt_id", debt_id);      
         
@@ -46,12 +65,13 @@ public class MainController {
         model.put("lawyer_id", lawyer_id);        
         
         
+        
+        
         return "financial/updateFinancial";
     }
     
     @PostMapping(value = "updateFinancialActivate")
     public String updateFinancialActivate(Map<String, Object> debtMap, @RequestParam("debt_interest") String debt_interest, @RequestParam("debt_condition") String debt_condition, @RequestParam("debtor_id") String debtor_id, @RequestParam("value") String debt_value, @RequestParam("debt_id") String debt_id, @RequestParam("debt_date") String debt_date, @RequestParam("debtor_name") String debtor_name, @RequestParam("lawyer_id") String lawyer_id, @RequestParam("creditor_id") String creditor_id) throws Exception {
-        System.out.println("updateFinancial_activate");
         NumberFormat numberFormat = NumberFormat.getInstance();
         
         //debt_value가 대여금 or 변제금의 금액
@@ -59,7 +79,6 @@ public class MainController {
         List<Map<String, Object>> allDebtList = bondService.selectAllDebtById(debtor_id);
         
         if(debt_condition.equals("rental")) {
-            System.out.println("rental");
             for(int i = 0; i < allDebtList.size(); i++) {
                 String tempString = String.valueOf(allDebtList.get(i).get("debt_id"));
                 if(tempString.equals(debt_id)) {
@@ -169,7 +188,7 @@ public class MainController {
                         temp_str = numberFormat.format(temp);
                         debtMap.put("debt_30interest", temp_str);
                         debtMap.put("debt_after30interest", temp_str);
-                        System.out.println(debtMap);
+                        
                     }
                 }
             }
@@ -324,7 +343,6 @@ public class MainController {
             // 이자를 환산할 날짜를 계산하는 코드
             long days_int = 0;
             String last_date = (String) debtList.get(debtList.size()-1).get("debt_date");
-            //System.out.println(last_date + " " + date);
             try {
                 SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
                 Date startDate = (Date) sdf.parse(last_date);
@@ -436,7 +454,6 @@ public class MainController {
             for(int i = 0; i < beforeList.length; i++)    {
                 String comma = numberFormat.format(beforeList[i]);
                 debtMap.put(afterListStrings[i], comma);
-                //System.out.println(afterListStrings[i]+ " : " + comma + " / ");
                 
             }
             debtMap.put("debt_defendant", 0);
@@ -451,7 +468,6 @@ public class MainController {
     
     @PostMapping(value = "rental")
     public ModelAndView getRental(@RequestParam("debtor_id") String debtor_id, @RequestParam("creditor_id") String creditor_id, @RequestParam("lawyer_id") String lawyer_id, @RequestParam("date") String date, @RequestParam("rental") String rental, @RequestParam("interest") String interest) throws Exception   {
-        System.out.println("=================================rental=================================");
         ModelAndView mv = new ModelAndView();
         mv.setViewName("financial/rental");
         String debtorName= bondService.selectDebtorName(debtor_id);
@@ -469,10 +485,8 @@ public class MainController {
         debtMap.put("debt_date", date);
             
         if(debtList.size() != 0)    {
-            System.out.println("!");
             long days_int = 0;
             String last_date = (String) debtList.get(debtList.size()-1).get("debt_date");
-            System.out.println(last_date);
             try {
                 SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
                 Date startDate = (Date) sdf.parse(last_date);
@@ -484,7 +498,6 @@ public class MainController {
             } catch(Exception e)    {
                 System.out.println(e);
             }
-            System.out.println("#");
             
             String last_after12rental_string = (String) debtList.get(debtList.size()-1).get("debt_after12rental");
             String last_after18rental_string = (String) debtList.get(debtList.size()-1).get("debt_after18rental");
@@ -613,8 +626,6 @@ public class MainController {
     public String insertDebtorActivate(Map<String, Object> model, @RequestParam("lawyerId") String lawyer_id, @RequestParam("debtor_id") String debtor_id, @RequestParam("debtor_name") String debtor_name, @RequestParam("hp1") String hp1, @RequestParam("hp2") String hp2, @RequestParam("hp3") String hp3, @RequestParam("creditorList") String creditor_id) throws Exception    {
         String debtor_hp = hp1 + "-" + hp2 + "-" + hp3;
         
-        System.out.println(debtor_hp + "\n" + debtor_name + "\n" + debtor_id + "\n" + creditor_id + "\n" + lawyer_id);
-        
         Map<String, Object> debtorMap = new HashMap<String, Object>();
         debtorMap.put("debtor_name", debtor_name);
         debtorMap.put("debtor_hp", debtor_hp);
@@ -664,9 +675,35 @@ public class MainController {
         return "login/find_user";
     }
     
-    @GetMapping(value = "login_page")
+    @GetMapping(value = "/")
     public String getLoginPage()    {
         return "login/login_page";
+    }
+    
+    @PostMapping(value="lawyerInserting")
+    public String lawyerInserting(String uID, String uPW, String uNAME, String hp1, String hp2, String hp3) throws Exception {
+        int temp = 0;
+        temp = loginService.duplicateId(uID);
+        
+        if(temp > 0)    {
+            return "/login/duplicateId";
+        }
+        
+        String hp = hp1 + "-" + hp2 + "-" + hp3;
+        int result = 0;
+        result = loginService.insertLawyer(uID, uPW, hp, uNAME);
+        
+        if(result > 0)  {
+            return "/login/lawyerInserting_success";
+        }
+        else    {
+            return "/login/lawyerInserting_fail";
+        }
+    }
+    
+    @GetMapping(value="insertLawyer")
+    public String insertLaywer()  {
+        return "/login/insertLawyer";
     }
     
     @GetMapping(value="login_error")
@@ -677,7 +714,6 @@ public class MainController {
     @PostMapping(value="updateDebtorActivate")
     public String updateDebtorActivate(Map<String, Object> model, @RequestParam("creditorList") String creditor_id ,@RequestParam("debtor_email") String debtor_email ,@RequestParam("debtor_name") String debtor_name, @RequestParam("hp1") String hp1, @RequestParam("hp2") String hp2, @RequestParam("hp3") String hp3, @RequestParam("debtor_id") String debtor_id) throws Exception    {
         String debtor_hp = hp1 + "-" + hp2 + "-" + hp3;
-        System.out.println(debtor_hp + "\n" + debtor_id + "\n" + debtor_name + "\n" + debtor_email + "\n" + creditor_id);
         
         Map<String, Object> debtorMap = new HashMap<String, Object>();
         debtorMap.put("creditor_id", creditor_id);
@@ -695,7 +731,6 @@ public class MainController {
     
     @GetMapping(value="updateDebtor")
     public String getUpdateDebtor(@RequestParam("id") String id, Map<String, Object> model) throws Exception {
-        //System.out.println("아이디 : "  + id);
         Map<String, Object> debtorMap = new HashMap<String, Object>();
         debtorMap = bondService.selectDebtor(id);
         
@@ -717,6 +752,47 @@ public class MainController {
         model.put("creditorList", creditorMap);
         
         return "financial/updateDebtor";
+    }
+    
+    @GetMapping(value="updateLawyer")
+    public ModelAndView updateLawyer(HttpServletRequest httpServletRequest) throws Exception  {
+        ModelAndView mv = new ModelAndView();
+        mv.setViewName("/financial/updateLawyer");
+        
+        HttpSession session = httpServletRequest.getSession(false);        
+        String id = (String) session.getAttribute("uID");
+        String pw = (String) session.getAttribute("uPW");
+        
+        Map<String, Object> lawyerMap = new HashMap<String, Object>()   {{
+            put("lawyer_id", id);
+            put("lawyer_pw", pw);
+        }};
+        
+        List<Map<String, Object>> lawyerList = loginService.selectLawyer(lawyerMap);
+        
+        mv.addObject("pk", lawyerList.get(0).get("id"));
+        mv.addObject("id", lawyerList.get(0).get("lawyer_id"));
+        mv.addObject("name", lawyerList.get(0).get("lawyer_name"));
+        mv.addObject("hp", lawyerList.get(0).get("lawyer_hp"));
+        
+        return mv;
+    }
+    
+    @PostMapping(value="lawyerUpdating")
+    public ModelAndView lawyerUpdating(String uNAME, String uID, String hp1, String hp2, String hp3, String pk) throws Exception  {
+        ModelAndView mv = new ModelAndView();
+        mv.setViewName("/financial/updatingLawyer");
+        
+        String hp = hp1 + "-" + hp2 + "-" + hp3;
+        String id = uID;
+        String name = uNAME;
+        
+        int result = 0;
+        result = loginService.updateLawyer(name, hp, id, pk);
+        
+        mv.addObject("result", result);
+        
+        return mv;
     }
     
     @GetMapping(value="selectDebtor")
@@ -756,7 +832,6 @@ public class MainController {
         session.setAttribute("uPW", uPW);
         
         ModelAndView mv = new ModelAndView();
-        System.out.println("pass login");
         Map<String, Object> lawyerMap = new HashMap<String, Object>()   {{
             put("lawyer_id", uID);
             put("lawyer_pw", uPW);
@@ -764,21 +839,21 @@ public class MainController {
         
         List<Map<String, Object>> temp = loginService.selectLawyer(lawyerMap);
         if(temp.size() != 0)    {   
-            System.out.println("로그인 결과 : " + temp.get(0).get("lawyer_id"));
+            System.out.println("login success!");
             session.setAttribute("lawyerId", temp.get(0).get("id"));
         
             mv.setViewName("redirect:/selectDebtor");         
         }
         else {
-            mv.setViewName("login/login_fail");            
+            mv.setViewName("/login/login_fail");            
         }
         return mv;
     }
     @GetMapping(value="logout")
-    public String getLogout(HttpServletRequest httpServletRequest)   {
+    public void getLogout(HttpServletRequest httpServletRequest, HttpServletResponse response) throws IOException   {
         HttpSession session = httpServletRequest.getSession(false);
         session.invalidate();
-        return "login/login_page";
+        response.sendRedirect("/");
     }
     
     
@@ -795,10 +870,8 @@ public class MainController {
     @PostMapping(value="checkId")
     public ModelAndView getCheckId(@RequestParam("uName") String name, @RequestParam("hp1") String hp1, @RequestParam("hp2") String hp2, @RequestParam("hp3") String hp3) throws Exception    {
         ModelAndView mv = new ModelAndView();
-        mv.setViewName("login/checkId");
+        mv.setViewName("/login/checkId");
         
-        System.out.println(name);
-        System.out.println(hp1 + "-" + hp2 + "-" + hp3);
         String hp = hp1 + "-" + hp2 + "-" + hp3;
         
         Map<String, Object> piMap = new HashMap<String, Object>();
@@ -808,15 +881,13 @@ public class MainController {
         
         String idString = loginService.checkId(piMap);
         mv.addObject("id", idString);
-        System.out.println(idString);
         
         return mv;
     }
     
     @PostMapping(value = "checkPw")
-    public ModelAndView getCheckPw(@RequestParam("uID") String id, @RequestParam("uNAME") String name, @RequestParam("hp1") String hp1, @RequestParam("hp2") String hp2, @RequestParam("hp3") String hp3)   {
+    public ModelAndView getCheckPw(@RequestParam("uID") String id, @RequestParam("uNAME") String name, @RequestParam("hp1") String hp1, @RequestParam("hp2") String hp2, @RequestParam("hp3") String hp3) throws Exception   {
         ModelAndView mv = new ModelAndView();
-        mv.setViewName("login/checkPw");
         
         String hp = hp1 + "-" + hp2 + "-" + hp3;
         
@@ -825,15 +896,165 @@ public class MainController {
         piMap.put("lawyer_hp", hp);
         piMap.put("lawyer_id", id);
         
-        
+        int success = loginService.checkPw(piMap);
+        if(success > 0)  {            
+            mv.setViewName("/login/checkPw");
+        }
+        else    {
+            mv.setViewName("/login/checkPwFail");
+        }
         return mv;
     }
     
+    @PostMapping(value="updateLawyer_Pw")
+    public ModelAndView updateLawyerPw(String id, String pw, String hp, String name) throws Exception    {
+        ModelAndView mv = new ModelAndView();
+        mv.setViewName("/login/updateLawyerPw");
+        
+        int temp = loginService.updateLawyerPw(id, pw, hp, name);
+        
+        mv.addObject("result", temp);
+        return mv;
+    }
+    
+    
     @PostMapping(value = "excel")
-    public String getExcel(@RequestParam("category") List<String> category, @RequestParam("excelStatus") String execelStatus, @RequestParam("debtor_id") String debtor_id, @RequestParam("creditor_id") String creditor_id, @RequestParam("lawyer_id") String lawyer_id, @RequestParam("debtor_name") String debtor_name, @RequestParam("num1") String num1, @RequestParam("num2") String num2)    {        
-        System.out.println(category);
-        System.out.println(category.get(0));
-        System.out.println(category.get(1));
-        return "financial/excel";
+    public void getExcel(HttpServletResponse response, @RequestParam("fileName") String fileName, @RequestParam("category") List<String> category, @RequestParam("excelStatus") String excelStatus, @RequestParam("debtor_id") String debtor_id, @RequestParam("creditor_id") String creditor_id, @RequestParam("lawyer_id") String lawyer_id, @RequestParam("debtor_name") String debtor_name, @RequestParam("num1") String num1, @RequestParam("num2") String num2) throws IOException   {        
+        LocalDate now = LocalDate.now();
+        
+        XSSFWorkbook wb = new XSSFWorkbook();
+        XSSFSheet sheet = null;
+        Row row = null;
+        Cell cell = null;
+        sheet = wb.createSheet(debtor_name + "_" + now);
+        
+        Map<String, String> tempCategory = new HashMap<String, String>();
+        tempCategory.put("날짜", "debt_date");
+        tempCategory.put("대여금", "debt_rental");
+        tempCategory.put("적용이율", "debt_interest");
+        tempCategory.put("30%원금(충당전)", "debt_30rental");
+        tempCategory.put("18%원금(충당전)", "debt_18rental");
+        tempCategory.put("12%원금(충당전)", "debt_12rental");
+        tempCategory.put("30%이자(충당전)", "debt_30interest");
+        tempCategory.put("18%이자(충당전)", "debt_18interest");
+        tempCategory.put("12%이자(충당전)", "debt_12interest");
+        tempCategory.put("변제금액", "debt_liquidation");
+        tempCategory.put("30%원금(충당후)", "debt_after30rental");
+        tempCategory.put("18%원금(충당후)", "debt_after18rental");
+        tempCategory.put("12%원금(충당후)", "debt_after12rental");
+        tempCategory.put("30%이자(충당후)", "debt_after30interest");
+        tempCategory.put("18%이자(충당후)", "debt_after18interest");
+        tempCategory.put("12%이자(충당후)", "debt_after12interest");
+        tempCategory.put("피고채권", "debt_defendant");
+        
+        
+        // 배경색 설정 (노란색)
+        XSSFCellStyle headerStyle = wb.createCellStyle();
+        headerStyle.setFillForegroundColor(IndexedColors.YELLOW.getIndex());
+        headerStyle.setFillPattern(FillPatternType.SOLID_FOREGROUND);
+        
+        // 배경색 흰색으로 설정후 정수의 3자리마다 쉼표 추가
+        XSSFCellStyle regularCommaStyle = wb.createCellStyle();
+        regularCommaStyle.setFillForegroundColor(IndexedColors.WHITE.getIndex());
+        regularCommaStyle.setFillPattern(FillPatternType.SOLID_FOREGROUND);       
+        XSSFCreationHelper format = wb.getCreationHelper();
+        regularCommaStyle.setDataFormat(format.createDataFormat().getFormat("#,##0"));
+        
+        // 배경색 설정 (흰색)
+        XSSFCellStyle regularStyle = wb.createCellStyle();
+        regularStyle.setFillForegroundColor(IndexedColors.WHITE.getIndex());
+        regularStyle.setFillPattern(FillPatternType.SOLID_FOREGROUND);
+        
+        
+        row = sheet.createRow(0);
+        cell = row.createCell(0);
+        cell.setCellValue("순번");
+        cell.setCellStyle(headerStyle);
+        for(int i = 0; i < category.size(); i++)    {
+            cell = row.createCell(i+1);
+            cell.setCellValue(category.get(i));
+            cell.setCellStyle(headerStyle);
+            if(tempCategory.containsKey(category.get(i)))   {
+                category.set(i, tempCategory.get(category.get(i)));
+            }
+        }
+        
+        List<Map<String, Object>> debtList = new ArrayList<Map<String, Object>>();
+        try {
+            debtList = bondService.getDebtList(debtor_id);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        
+        if(num1 != "" && num2 != "") {
+            //부분 엑셀화
+            System.out.println("부분 엑셀화");
+            int start = Integer.valueOf(num1);
+            int end = Integer.valueOf(num2);
+            int tempRow = 1; 
+            for(int i = start-1; i < end; i++)    {
+                row = sheet.createRow(tempRow);
+                cell = row.createCell(0);
+                cell.setCellValue(tempRow++);
+                cell.setCellStyle(regularStyle);
+                int tempCell = 1;
+                for(int j = 0; j < category.size(); j++)    {
+                    cell = row.createCell(tempCell++);
+                    if(category.get(j).equals("debt_date") || category.get(j).equals("debt_interest")) {
+                        cell.setCellValue((String) debtList.get(i).get(category.get(j)));
+                        cell.setCellStyle(regularStyle);
+                    }
+                    else    {
+                        String temp = (String) debtList.get(i).get(category.get(j));
+                        temp = temp.replace(",", "");
+                        cell.setCellValue(Integer.valueOf(temp));
+                        cell.setCellStyle(regularCommaStyle);
+                    }
+                }
+            }
+            
+        }
+        else if(num1 == "" && num2 == "")    {
+            //전체 엑셀화
+            System.out.println("전체 엑셀화");
+            int tempRow = 1;
+            for(int i = 0; i < debtList.size(); i++)    {
+                row = sheet.createRow(tempRow);
+                cell = row.createCell(0);
+                cell.setCellValue(tempRow++);
+                cell.setCellStyle(regularStyle);
+                int tempCell = 1;
+                for(int j = 0; j < category.size(); j++)    {
+                    cell = row.createCell(tempCell++);
+                    if(category.get(j).equals("debt_date") || category.get(j).equals("debt_interest")) {
+                        cell.setCellValue((String) debtList.get(i).get(category.get(j)));
+                        cell.setCellStyle(regularStyle);
+                    }
+                    else    {
+                        String temp = (String) debtList.get(i).get(category.get(j));
+                        temp = temp.replace(",", "");
+                        cell.setCellValue(Integer.valueOf(temp));
+                        cell.setCellStyle(regularCommaStyle);
+                    }
+                }
+            }
+        }
+        for(int i = 1; i <= category.size(); i++)    {
+                sheet.autoSizeColumn(i, true);
+                sheet.setColumnWidth(i, (sheet.getColumnWidth(i))+1024);
+        }
+        response.setContentType("application/vnd.openxmlformats-officedocument.spreadsheetml.sheet");
+        String tempFileName = fileName + ".xlsx";
+        String encodedFileName = URLEncoder.encode(tempFileName, "UTF-8").replaceAll("\\+", "%20"); // 공백 처리
+        response.setHeader("Content-Disposition", "attachment; filename*=UTF-8''" + encodedFileName);
+        
+        // 사용자에게 파일 전송
+        ServletOutputStream outputStream = response.getOutputStream();
+        wb.write(outputStream);
+        outputStream.close();
+        
+        // 워크북 자원 해제
+        wb.close();
+        
     }
 }

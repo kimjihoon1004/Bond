@@ -3,12 +3,12 @@
 <!DOCTYPE html>
 <html>
 <head>
-<meta charset="EUC-KR">
-<title>로그인 실패</title>
+<meta charset="UTF-8">
+<title>회원가입 성공</title>
 </head>
 <body>
 <script>
-alert("로그인 실패");
+alert("회원가입 성공");
 location.href = "/";
 </script>
 </body>

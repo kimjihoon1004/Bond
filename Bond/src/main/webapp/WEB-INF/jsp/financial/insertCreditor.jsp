@@ -7,8 +7,45 @@
 <title>채권자 추가</title>
 </head>
 <body>
+<script type="text/javascript">
+function nullCheck()    {
+    var name = document.creditorTable.creditor_name.value;
+    var hp1 = document.creditorTable.hp1.value;
+    var hp2 = document.creditorTable.hp2.value;
+    var hp3 = document.creditorTable.hp3.value;
+    var email = document.creditorTable.creditor_id.value;
+    
+    if(name === "")    {
+        alert("이름을 입력하세요.");
+        document.creditorTable.creditor_name.focus();
+        return false;
+    }
+    if(hp1 === "")    {
+        alert("전화번호를 입력하세요.");
+        document.creditorTable.hp1.focus();
+        return false;
+    }
+    if(hp2 === "")    {
+        alert("전화번호를 입력하세요.");
+        document.creditorTable.hp2.focus();
+        return false;
+    }
+    if(hp3 === "")    {
+        alert("전화번호를 입력하세요.");
+        document.creditorTable.hp3.focus();
+        return false;
+    }
+    if(email === "")    {
+        alert("이메일를 입력하세요.");
+        document.creditorTable.creditor_id.focus();
+        return false;
+    }
+    return true;
+}
+</script>
 
-<form action="insertCreditorActivate" method="post">
+
+<form name="creditorTable" action="insertCreditorActivate" method="post" onsubmit="return nullCheck()">
 <table border="2" style="width= 400px; margin-left: auto; margin-right: auto;">
     <tr style="height: 50px; text-align: center;">
         <td colspan="2" bgcolor="lightgray">

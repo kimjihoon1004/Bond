@@ -36,9 +36,32 @@ function updateFinancial(debtId, debtorId, debtInterest, lawyerId, creditorId)  
 
 function entireExcelize()   {
 	document.excelize.excelStatus.value = "1";
-	document.excelize.submit();
 	
+	var x = document.excelize.fileName.value;
+	
+	if(!check())   {
+		return false;
+	}
+	if(x === "")   {
+		alert("엑셀파일 이름을 입력하세요.");
+        document.excelize.fileName.focus();
+		return false;
+	}
+	else{
+		document.excelize.submit();
+	}
 }
+
+function excelizeCheck()    {
+    if(!numInputNullCheck())   {
+        return false;
+    }
+    if(!check())   {
+        return false;
+    }
+    return true;
+}
+
 
 function check()    {
 	var count = 0;
@@ -60,17 +83,14 @@ function check()    {
 function numInputNullCheck() {
 	var x = document.forms["excelize"]["num1"].value;
 	var y = document.forms["excelize"]["num2"].value;
+	var z = document.excelize.fileName.value;
 	
-	if(x === "")   {
-		alert("시작순번을 입력하세요");
-		document.excelize.num1.focus();
+	if(z === "")   {
+		alert("엑셀파일 이름을 입력하세요.");
+		document.excelize.fileName.focus();
 		return false;
 	}
-	if(y === "")   {
-		alert("끝순번을 입력하세요");
-		document.excelize.num2.focus();
-		return false;
-	}
+	
 
     if(Number(x) > Number(y))   {
         alert("시작순번과 끝순번의 순서가 올바르지 않습니다.");
@@ -93,15 +113,6 @@ function numInputNullCheck() {
 	return true;
 }
 
-function excelizeCheck()    {
-	if(!numInputNullCheck())   {
-		return false;
-	}
-	if(!check())   {
-		return false;
-	}
-	return true;
-}
 
 
 function inputNullCheck()   {
@@ -148,12 +159,10 @@ function moneySubmitForm()   {
 String uID = (String) session.getAttribute("uID");
 String uPW = (String) session.getAttribute("uPW");
 int lawyerId = (Integer) session.getAttribute("lawyerId");
-System.out.println(uID + " " + uPW + " " + lawyerId);
 String debtorName = request.getParameter("debtor_name");
-System.out.println("===============================" + debtorName + "===============================");
 %>
 <!-- white-space: nowrap; 문자 내용이 모니터화면만큼에서 줄을 내리지 않고 끝까지 출력하는 속성 -->
-<h2>[ ${debtor_name }님의 변제충당표 ]</h2>
+<h2>[ ${debtor_name }님의 변제충당표 ]&nbsp;&nbsp;&nbsp;<button onclick="history.back()">뒤로가기</button></h2>
 <form name="pay" action="check_info" method="post" onsubmit="return moneySubmitForm()">
 <input type="hidden" name="creditorId" value="${creditor_id }">
 <input type="hidden" name="debtorId" value="${debtor_id }">
@@ -196,16 +205,17 @@ System.out.println("===============================" + debtorName + "===========
     });
   });
 </script>
+<!--  onsubmit="return excelizeCheck()" -->
 &nbsp;&nbsp;&nbsp;&nbsp;
-<form action="excel" name="excelize" method="post" onsubmit="return excelizeCheck()">
+<form action="excel" name="excelize" method="post" onsubmit="return excelizeCheck()" >
 <input type="hidden" name="excelStatus" value="0">
 <input type="hidden" name="debtor_id" value="${debtor_id }">
 <input type="hidden" name="creditor_id" value="${creditor_id }">
 <input type="hidden" name="lawyer_id" value="${lawyer_id }">
 <input type="hidden" name="debtor_name" value="${debtor_name }">
-<fieldset style="broder-color: black; width: 1230px; height: 85px;">
-     <legend>엑셀화</legend>
-     &nbsp;<input type="checkbox" name="category" value="순번">순번&nbsp;
+<fieldset style="broder-color: black; width: 1230px; height: 110px;">
+     <legend>엑셀화</legend>     
+     &nbsp;
      <input type="checkbox" name="category" value="날짜">날짜&nbsp;
      <input type="checkbox" name="category" value="대여금">대여금&nbsp;
      <input type="checkbox" name="category" value="적용이율">적용이율&nbsp;
@@ -225,11 +235,15 @@ System.out.println("===============================" + debtorName + "===========
      <input type="checkbox" name="category" value="피고채권">피고채권&nbsp;
      <br>
      &nbsp;
+     엑셀파일 이름 &nbsp;:&nbsp; 
+     <input type="text" name="fileName" placeholder="파일 이름 입력" style="width: 200px; height: 18px; font-size: medium;">
+     <br>
+     &nbsp;
      순번입력&nbsp;:&nbsp;
-     <input type="text" name="num1" placeholder="시작순번" style="width: 100px; height: 20px; font-size: medium;">&nbsp;~&nbsp;
-     <input type="text" name="num2" placeholder="끝순번" style="width: 100px; height: 20px; font-size: medium;">&nbsp;
-     <input type="submit" value="부분 엑셀화" name="part" style="width: 100px; height: 25px;">
-     &nbsp;&nbsp;|&nbsp;&nbsp;<input type="button" value="전체 엑셀화" name="entire" onclick="entireExcelize()" style="width: 100px; height: 25px;">
+     <input type="text" name="num1" placeholder="시작순번" style="width: 100px; height: 18px; font-size: medium;">&nbsp;~&nbsp;
+     <input type="text" name="num2" placeholder="끝순번" style="width: 100px; height: 18px; font-size: medium;">&nbsp;
+     <input type="submit" value="엑셀화" name="part" style="width: 100px; height: 23px;">&nbsp;&nbsp;( 순번이 입력되지 않을 시 전체 엑셀화 진행 )
+     <!-- &nbsp;&nbsp;|&nbsp;&nbsp;<input type="button" value="전체 엑셀화" name="entire" onclick="entireExcelize()" style="width: 100px; height: 23px;"> -->
 </fieldset>
 </form>
 <br>
@@ -254,7 +268,7 @@ System.out.println("===============================" + debtorName + "===========
   });
 </script>
 
-<table border="1" style="border-color:white; width: 2380px; text-align: center; border-collapse: collapse; ">
+<table border="1" style="border-color:white; width: 2420px; text-align: center; border-collapse: collapse; ">
     <tr style="height: 30px;">
         <td colspan="4" style="border-color: black; border-top: none; border-left: none;">        
         </td>
@@ -335,6 +349,9 @@ System.out.println("===============================" + debtorName + "===========
         <td style="width: 60px;">
             수정
         </td>
+        <td style="width: 40px;">
+            순번
+        </td>
     </tr>
     <form name="frm" action="updateFinancial" method="post">
     <c:forEach var="tempDebtList" items="${debtList}" varStatus="status">
@@ -397,6 +414,9 @@ System.out.println("===============================" + debtorName + "===========
 	        <td>
 	           <input type="button" onclick="updateFinancial('${tempDebtList.debt_id}','${tempDebtList.debtor_id}','${tempDebtList.debt_interest }','${tempDebtList.lawyer_id }','${tempDebtList.creditor_id }')" value="수정" style="height: 25px; width:50px;">   
 	        </td>
+	        <td>
+                ${i} 
+            </td>
         </tr>    
     </c:forEach>
     <input type="hidden" name="debtor_id" value="">

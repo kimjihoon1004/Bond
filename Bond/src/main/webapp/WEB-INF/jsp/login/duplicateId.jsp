@@ -3,13 +3,13 @@
 <!DOCTYPE html>
 <html>
 <head>
-<meta charset="EUC-KR">
-<title>로그인 실패</title>
+<meta charset="UTF-8">
+<title>아이디 중복</title>
 </head>
 <body>
 <script>
-alert("로그인 실패");
-location.href = "/";
+alert("아이디 중복으로 회원가입 실패");
+history.back();
 </script>
 </body>
 </html>

@@ -18,14 +18,14 @@
         <script>
         var id = "${id}";
         alert("회원님의 아이디는 " + id + " 입니다.");
-        location.href="login_page";
+        location.href="/";
         </script>
     </c:when>
     <c:otherwise>
         <!-- id 값이 없는 경우 이 부분이 실행됩니다. -->
         <script>
         alert("회원님의 회원정보가 존재하지 않습니다.");
-        location.href="find_id";
+        history.back();
         </script>
     </c:otherwise>
 </c:choose>

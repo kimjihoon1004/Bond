@@ -24,7 +24,7 @@ public class LoginService implements LoginMapper {
     }
     
     @Override
-    public Integer checkPw(Map<String, Object> piMap) throws Exception  {
+    public int checkPw(Map<String, Object> piMap) throws Exception  {
         return loginMapper.checkPw(piMap);
     }
     
@@ -32,4 +32,31 @@ public class LoginService implements LoginMapper {
     public List<Map<String, Object>> selectDebtor(int lawyer_id) throws Exception    {
         return loginMapper.selectDebtor(lawyer_id);
     }
+    
+    @Override
+    public int updateLawyerPw(String id, String pw, String hp, String name) throws Exception    {       
+        return loginMapper.updateLawyerPw(id, pw, hp, name);
+    }
+    
+    @Override
+    public int insertLawyer(String id, String pw, String hp, String name) throws Exception  {
+        int result = 0;
+        result = loginMapper.insertLawyer(id, pw, hp, name);
+        return result;
+    }
+    
+    @Override
+    public int duplicateId(String id) throws Exception   {
+        int result = 0;
+        result = loginMapper.duplicateId(id);
+        return result;
+    }
+    
+    @Override
+    public int updateLawyer(String name, String hp, String id, String pk) throws Exception   {
+        int result = 0;
+        result = loginMapper.updateLawyer(name, hp, id, pk);
+        return result;
+    }
+    
 }

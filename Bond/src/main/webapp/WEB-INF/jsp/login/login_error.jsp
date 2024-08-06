@@ -14,7 +14,7 @@ if(iidCheck == null || "".equals(iidCheck) || iidCheck == "") {
 %>
     <script>
     alert("로그인 후 사용하세요.");
-    location.href="login_page"; // 로그인 페이지 경로에 따라 수정
+    location.href="/"; // 로그인 페이지 경로에 따라 수정
     </script>
 <%
 }

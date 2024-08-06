@@ -71,7 +71,7 @@ function inputNullCheck()   {
     <br>
     <div style="text-align: center;">
         <input type="submit" style="WIDTH: 100pt; HEIGHT: 20pt; font-size: medium;" value="아이디 찾기">&nbsp;&nbsp;
-        <input type="button" style="width: 100pt; height: 20pt; font-size: medium;" value="취소" onclick="location.href='login_page'">
+        <input type="button" style="width: 100pt; height: 20pt; font-size: medium;" value="취소" onclick="location.href='/'">
     </div>
     <br>
     </form>

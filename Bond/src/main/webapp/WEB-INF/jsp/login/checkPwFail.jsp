@@ -3,13 +3,13 @@
 <!DOCTYPE html>
 <html>
 <head>
-<meta charset="EUC-KR">
-<title>로그인 실패</title>
+<meta charset="UTF-8">
+<title>비밀번호 찾기 실패</title>
 </head>
 <body>
-<script>
-alert("로그인 실패");
-location.href = "/";
+<script type="text/javascript">
+alert("일치하는 정보가 없습니다.");
+history.back();
 </script>
 </body>
 </html>

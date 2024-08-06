@@ -65,6 +65,7 @@ function goFinancial(debtorId, creditorId, debtorName) {
 </form>
 <br>
 <div style="text-align: center;">
+    <input type="button" value="정보수정" onclick = "location.href='updateLawyer'" style="font-size:medium; width:100px; height:30px;"/>&nbsp;&nbsp;
     <input type="button" value="채무자 추가" onclick = "location.href='insertDebtor'" style="font-size:medium; width:100px; height:30px;"/>&nbsp;&nbsp;
     <input type="button" value="채권자 추가" onclick="location.href='insertCreditor'" style="font-size:medium; width:100px; height:30px;"/>&nbsp;&nbsp;
     <input type="button" value="로그아웃" onclick="location.href='logout'" style="font-size:medium; width:100px; height:30px;"/>   

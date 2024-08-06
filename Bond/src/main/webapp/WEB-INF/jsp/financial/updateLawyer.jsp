@@ -1,12 +1,24 @@
 <%@ page language="java" contentType="text/html; charset=UTF-8"
     pageEncoding="UTF-8"%>
+<%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c"%>
 <!DOCTYPE html>
 <html>
 <head>
-<meta charset="EUC-KR">
-<title>비밀번호 찾기</title>
+<meta charset="UTF-8">
+<title>${anme } 정보 수정</title>
 </head>
 <body>
+<%-- 'hp' 값을 EL로 가져오기 --%>
+<c:set var="phone" value="${hp}" />
+
+<%
+String phone = (String) pageContext.getAttribute("phone");
+String[] phone_num = phone.split("-");
+String phone1 = phone_num[0];
+String phone2 = phone_num[1];
+String phone3 = phone_num[2];
+%>
+
 <script>
 function inputNullCheck()   {
     var name = document.forms["pi"]["uNAME"].value;
@@ -21,7 +33,7 @@ function inputNullCheck()   {
         return false;
     }
     if(id === "")   {
-        alert("아이디를 입력하세요.")
+        alert("아이디를 입력하세요.");
         document.pi.uID.focus();
         return false;
     }
@@ -47,11 +59,12 @@ function inputNullCheck()   {
 }
 </script>
 <fieldset>
-    <form name="pi" method="post" action="checkPw" onsubmit="return inputNullCheck()">
+    <form name="pi" method="post" action="lawyerUpdating" onsubmit="return inputNullCheck()">
+    <input type="hidden" name="pk" value="${pk }">
     <table border="2" style="margin-left: auto; margin-right: auto;">
         <tr style="height: 50px; text-align: center;">
             <td colspan = "2" bgcolor = "lightgray" class = "style1">
-                <h2>비밀번호 찾기</h2>
+                <h2>${name } 정보 수정</h2>
             </td>                   
         </tr>
         <tr style="height: 40px;">
@@ -59,7 +72,21 @@ function inputNullCheck()   {
                 이름
             </td>
             <td  width = "500">
-                &nbsp;&nbsp;<input type="text" name="uNAME" style="width: 300px; height: 20px; font-size: large;" />
+                &nbsp;&nbsp;<input type="text" name="uNAME" value="${name }" style="width: 300px; height: 20px; font-size: large;" />
+            </td>
+        </tr>
+        
+        <tr style="height: 40px;">
+            <td style="text-align: center;" width = "130" bgcolor = "lightgray" class = "style2">
+                전화번호
+            </td>
+            <td  width = "500">
+                &nbsp;
+                <input type="text" name="hp1" value="<%=phone1 %>" style="width: 50px; heigth: 20px; font-size: large;">
+                &nbsp;-&nbsp;
+                <input type="text" name="hp2" value="<%=phone2 %>" style="width: 70px; heigth: 20px; font-size: large;">
+                &nbsp;-&nbsp;
+                <input type="text" name="hp3" value="<%=phone3 %>" style="width: 70px; heigth: 20px; font-size: large;">                
             </td>
         </tr>
         
@@ -68,27 +95,15 @@ function inputNullCheck()   {
                 아이디
             </td>
             <td  width = "500">
-                &nbsp;&nbsp;<input type="text" name="uID" style="width: 300px; height: 20px; font-size: large;" />
+                &nbsp;&nbsp;<input type="text" name="uID" value="${id }" style="width: 300px; height: 20px; font-size: large;" />
             </td>
         </tr>
-        <tr style="height: 40px;">
-            <td style="text-align: center;" width = "130" bgcolor = "lightgray" class = "style2">
-                전화번호
-            </td>
-            <td  width = "500">
-                &nbsp;
-                <input type="text" name="hp1" style="width: 50px; heigth: 20px; font-size: large;">
-                &nbsp;-&nbsp;
-                <input type="text" name="hp2" style="width: 70px; heigth: 20px; font-size: large;">
-                &nbsp;-&nbsp;
-                <input type="text" name="hp3" style="width: 70px; heigth: 20px; font-size: large;">                
-            </td>
-        </tr>
+        
     </table>
     <br>
     <div style="text-align: center;">
-        <input type="submit" style="WIDTH: 100pt; HEIGHT: 20pt; font-size: medium;" value="비밀번호 찾기">&nbsp;&nbsp;
-        <input type="button" style="width: 100pt; height: 20pt; font-size: medium;" value="취소" onclick="location.href='/'">
+        <input type="submit" style="WIDTH: 100pt; HEIGHT: 20pt; font-size: medium;" value="정보수정">&nbsp;&nbsp;
+        <input type="button" style="width: 100pt; height: 20pt; font-size: medium;" value="취소" onclick="history.back()">
     </div>
     <br>
     </form>
